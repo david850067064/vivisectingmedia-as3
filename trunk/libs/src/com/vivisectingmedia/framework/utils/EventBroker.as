@@ -16,7 +16,7 @@
  * The Initial Developer of the Original Code is
  * James Polanco (www.vivisectingmedia.com).
  * Report issues to james [at] vivisectingmedia.com
- * Portions created by tames Polanco are Copyright (C) 2008
+ * Portions created by James Polanco are Copyright (C) 2008
  * James Polanco. All Rights Reserved.
  *
  *
