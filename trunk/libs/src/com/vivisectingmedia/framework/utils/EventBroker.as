@@ -11,7 +11,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is ActionScript 3 EventBroker version 1.0.
+ * The Original Code is ActionScript 3 EventBroker version 1.01.
  *
  * The Initial Developer of the Original Code is
  * James Polanco (www.vivisectingmedia.com).
@@ -94,6 +94,15 @@
 		static public function unsubscribe(eventType:String, callback:Function):void
 		{
 			instance.removeSubscriber(eventType, callback);
+		}
+		
+		/**
+		 * Removes all subscribed methods and objects from the EventBroker. 
+		 * 
+		 */
+		static public function clearAllSubscriptions():void
+		{
+			instance.clean();
 		}
 		
 		/**
@@ -218,6 +227,13 @@
 			}
 			
 			_itemsDuringLock = new Array();
+		}
+		
+		private function clean():void
+		{
+			_eventList = new Object();
+			_itemsDuringLock = new Array();
+			_lockQueue = false;
 		}
 
 	}
