@@ -24,6 +24,7 @@
 package com.vivisectingmedia.libtests
 {
 	import com.vivisectingmedia.libtests.tests.EventBrokerTests;
+	import com.vivisectingmedia.libtests.tests.SelectionControllerTests;
 	
 	import flexunit.flexui.TestRunnerBase;
 	import flexunit.framework.TestSuite;
@@ -56,6 +57,7 @@ package com.vivisectingmedia.libtests
 			
 			// current test suites
 			suite.addTest( EventBrokerTests.suite() );
+			suite.addTest( SelectionControllerTests.suite() );
 			
 			return suite;
 		}
