@@ -11,7 +11,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is ActionScript 3 SelectionGroupController version 1.0.
+ * The Original Code is ActionScript 3 SelectionController version 1.0.
  *
  * The Initial Developer of the Original Code is
  * James Polanco (www.vivisectingmedia.com).
@@ -32,10 +32,10 @@ package com.vivisectingmedia.framework.controllers
 	 * @author james
 	 * 
 	 */
-	public class SelectionGroupController
+	public class SelectionController
 	{
 		/* STATIC PROPERTIES */
-		static private var __instance:SelectionGroupController;
+		static private var __instance:SelectionController;
 		
 		/* PRIVATE PROPERTIES */
 		private var _groupId:int = 1;
@@ -113,6 +113,16 @@ package com.vivisectingmedia.framework.controllers
 		}
 		
 		/**
+		 * This method removes all items and groups from the selection
+		 * controller. 
+		 * 
+		 */
+		static public function clearAllGroups():void
+		{
+			instance.inst_clearAllGroups();
+		}
+		
+		/**
 		 * Used to generate a unique group id.  This should be called when creating a new grouping to verify that the provided id
 		 * is unique in the system.
 		 *  
@@ -124,25 +134,11 @@ package com.vivisectingmedia.framework.controllers
 			return instance.inst_generateNewId();
 		}
 		
-		/* STATIC PROTECTED METHODS */
-		static protected function get instance():SelectionGroupController
+		/* STATIC PRIVATE METHODS */
+		static private function get instance():SelectionController
 		{
-			if(!__instance) __instance = new SelectionGroupController(new SingletonLock());
+			if(!__instance) __instance = new SelectionController(new SingletonLock());
 			return __instance;
-		}
-		
-		/**
-		 * This method enables automatic testing by allowing an extended wrapper test class
-		 * to reset the singleton instance.  By enabling this function we can apply a battery
-		 * of tests that need clean instances of the singleton.  This method should not be called
-		 * in development and is marked private so not to be ASDoc'd.
-		 * 
-		 * @private 
-		 * 
-		 */
-		static protected function resetInstance():void
-		{
-			__instance = new SelectionGroupController(new SingletonLock());
 		}
 		
 		/* PUBLIC METHODS */
@@ -153,14 +149,14 @@ package com.vivisectingmedia.framework.controllers
 		 * @param lock
 		 * 
 		 */
-		public function SelectionGroupController(lock:SingletonLock)
+		public function SelectionController(lock:SingletonLock)
 		{
 			// CONSTRUCTOR
 			_groupTable = new HashTable();
 			_itemTable = new HashTable();
 		}
 		
-		/* PROTECTED METHODS */
+		/* PRIVATE METHODS */
 		/**
 		 * Method called by the public facade method addItem().
 		 *  
@@ -168,7 +164,7 @@ package com.vivisectingmedia.framework.controllers
 		 * @param groupId
 		 * 
 		 */		
-		protected function inst_addItem(item:ISelectableObject, groupId:int):void
+		private function inst_addItem(item:ISelectableObject, groupId:int):void
 		{
 			if(_itemTable.containsKey(item)) removeItem(item); // remove item from existing group
 			_itemTable.addItem(item, groupId);
@@ -189,10 +185,15 @@ package com.vivisectingmedia.framework.controllers
 		 * @param item
 		 * 
 		 */
-		protected function inst_selectItem(item:ISelectableObject):void
+		private function inst_selectItem(item:ISelectableObject):void
 		{
 			// get all the items in the group
-			if(!_itemTable.containsKey(item)) return; // not in the queue
+			if(!_itemTable.containsKey(item))
+			{
+				// select the item but return, not grouped.
+				item.selected = true;
+				return;
+			}
 			var itemList:Array = _groupTable.getItem(_itemTable.getItem(item)) as Array;
 			
 			// select the item, deselect the rest 
@@ -209,7 +210,7 @@ package com.vivisectingmedia.framework.controllers
 		 * @param group
 		 * 
 		 */
-		protected function inst_deselectAll(group:int):void
+		private function inst_deselectAll(group:int):void
 		{
 			// get all the items in the group
 			if(!_groupTable.containsKey(group)) return; // not in the queue
@@ -229,7 +230,7 @@ package com.vivisectingmedia.framework.controllers
 		 * @return 
 		 * 
 		 */
-		protected function inst_getItemGroup(item:ISelectableObject):int
+		private function inst_getItemGroup(item:ISelectableObject):int
 		{
 			var group:int = -1;
 			if(_itemTable.containsKey(item)) group = _itemTable.getItem(item);
@@ -241,7 +242,7 @@ package com.vivisectingmedia.framework.controllers
 		 * @param item
 		 * 
 		 */
-		protected function inst_removeItem(item:ISelectableObject):void
+		private function inst_removeItem(item:ISelectableObject):void
 		{
 			// verify we have the item
 			if(!_itemTable.containsKey(item)) return;
@@ -274,9 +275,10 @@ package com.vivisectingmedia.framework.controllers
 		 * @param groupId
 		 * 
 		 */
-		protected function inst_removeAllItems(groupId:int):void
+		private function inst_removeAllItems(groupId:int):void
 		{
 			// get the group, remove the items
+			if(!_groupTable.containsKey(groupId)) return;
 			var itemList:Array = _groupTable.getItem(groupId) as Array;
 			
 			// find the item, remove it from the itemTable
@@ -291,11 +293,22 @@ package com.vivisectingmedia.framework.controllers
 		}
 		
 		/**
+		 * Method called by the public facade method clearAllGroups();
+		 * 
+		 */
+		private function inst_clearAllGroups():void
+		{
+			_itemTable.removeAll();
+			_groupTable.removeAll();
+			_groupId = 1;
+		}
+		
+		/**
 		 * Method called by the public facade method generateNewId(). 
 		 * @return 
 		 * 
 		 */
-		protected function inst_generateNewId():int
+		private function inst_generateNewId():int
 		{
 			return _groupId++;
 		}

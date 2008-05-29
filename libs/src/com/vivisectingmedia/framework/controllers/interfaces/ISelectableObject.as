@@ -24,7 +24,7 @@
 package com.vivisectingmedia.framework.controllers.interfaces
 {
 	/**
-	 * This Interface enables any object to become selectable and can be used within the SelectionGroupController
+	 * This Interface enables any object to become selectable and can be used within the SelectionController
 	 * class.
 	 * 
 	 * @author James Polanco

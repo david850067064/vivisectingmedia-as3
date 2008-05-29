@@ -132,13 +132,7 @@ package com.vivisectingmedia.framework.datastructures.utils
 		 */
 		public function getAllItems():Array
 		{
-			var clone:Array = new Array();
-			var len:int = _itemTable.length;
-			for(var i:uint = 0; i < len; i++)
-			{
-				clone.push(_itemTable[i]);
-			}
-			return clone;
+			return _itemTable.slice();
 		}
 		
 		/**
@@ -149,13 +143,7 @@ package com.vivisectingmedia.framework.datastructures.utils
 		 */
 		public function getAllKeys():Array
 		{
-			var clone:Array = new Array();
-			var len:int = _keyTable.length;
-			for(var i:uint = 0; i < len; i++)
-			{
-				clone.push(_keyTable[i]);
-			}
-			return clone;
+			return _keyTable.slice();
 		}
 		
 		/**
