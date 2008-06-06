@@ -27,11 +27,11 @@ package com.vivisectingmedia.framework.controllers
 	import com.vivisectingmedia.framework.datastructures.utils.HashTable;
 	
 	/**
-	 * <p>Provides a set of controls that allows any object that implement ISelectable to behave
+	 * Provides a set of controls that allows any object that implement ISelectable to behave
 	 * as a selection group.  This Controller allows a you to generate a group id and then
 	 * group ISelectable items using this id value.  Once a group has been defined a you can then
 	 * select a single item in the group and the other items will be deselected similarlary to a
-	 * radio group, you can deselect all items or select items when using mutliple select.</p>
+	 * radio group, you can deselect all items or select items when using mutliple select.
 	 * 
 	 * <p>Items can be selected outside of the SelectionController and the selection of other items
 	 * will not be modified unless the selection action is made through the SelectionController. This
@@ -53,9 +53,9 @@ package com.vivisectingmedia.framework.controllers
 		
 		/* STATIC PUBLIC METHODS */
 		/**
-		 * <p>Adds a Selectable item to a specificed group id.  The group id should be a unique id that 
+		 * Adds a Selectable item to a specificed group id.  The group id should be a unique id that 
 		 * defines the group the item belongs to. Use the generateNewId() method on this class to 
-		 * generate a unique that the id which is not in use within the manager.</p>
+		 * generate a unique that the id which is not in use within the manager.
 		 * 
 		 * <p>If an item is already assigne to a group id this method will remove the item from the
 		 * previous group and re-assign the item to a new group.  Items can only be assigned to one
