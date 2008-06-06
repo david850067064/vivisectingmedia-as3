@@ -26,10 +26,10 @@
 	import flash.events.Event;
 	
 	/**
-	 * <p>The EventBroker is a remote Observer pattern that allows objects to subscribe to events that may be broadcasted by any item in the system.
+	 * The EventBroker is a remote Observer pattern that allows objects to subscribe to events that may be broadcasted by any item in the system.
 	 * This utility is useful for situations where the broadcaster may not be a direct child or could change as the application is run.  The EventBroker
 	 * allows for any object to subscribe to any event that is broadcasted through the broker.  The subscriber must provide a callback that accepts one
-	 * argument of type Event.</p>
+	 * argument of type Event.
 	 * 
 	 * <p>The EventBroker is a Static object which means that all access must be made through the static methods.  The class is a facade Singleton which means
 	 * that even though you are calling a static method a singleton object is defined so that only one instance of the EventBroker exists.</p>

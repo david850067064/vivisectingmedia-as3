@@ -36,10 +36,10 @@ package com.vivisectingmedia.framework.utils
 	import flash.utils.getQualifiedClassName;
 
 	/**
-	 * <p>The LocalConnectionManager provides a simpler interface to the Flash LocalConnection that is designed to support
+	 * The LocalConnectionManager provides a simpler interface to the Flash LocalConnection that is designed to support
 	 * retention of Class type when communication with other ActionScript 3 Applications.  For Class retention to work
 	 * both Application must contain the custom class.  If the class does not existing in the receiving Application an
-	 * error event will be dispatched.</p>
+	 * error event will be dispatched.
 	 * 
 	 * <p>To use this utility create a new instance of the Class providing the target Object that methods send from another 
 	 * LocalConnection should be applied to, create a connection to expose this application to other LCM enabled applications
@@ -67,7 +67,7 @@ package com.vivisectingmedia.framework.utils
 		protected var currentConnectionName:String;
 		
 		/**
-		 * <p>Constructor.  Creates a new instance of a LCM and establishes the LocalConnection instance during construction.</p>
+		 * Constructor.  Creates a new instance of a LCM and establishes the LocalConnection instance during construction.
 		 * 
 		 * <p>The constructor also opens the application for communication with other LCM enabled applications based on the name provided.  For other LCM
 		 * enabled apps to successfully communicate the app must be on an approved domain and know the name that is defined for
