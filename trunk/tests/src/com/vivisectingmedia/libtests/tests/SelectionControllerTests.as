@@ -55,6 +55,7 @@ package com.vivisectingmedia.libtests.tests
 			ts.addTest(new SelectionControllerTests("testRemovingUngroupedItem"));
 			ts.addTest(new SelectionControllerTests("testClearAll"));
 			ts.addTest(new SelectionControllerTests("testRegrouping"));
+			ts.addTest(new SelectionControllerTests("testSelectAll"));
 			
 			return ts;
 		}
@@ -560,6 +561,36 @@ package com.vivisectingmedia.libtests.tests
 			assertFalse("Selection4 should be deselected.", selection4.selected);
 			assertFalse("Selection5 should be deselected.", selection5.selected);
 			assertFalse("Selection6 should be deselected.", selection6.selected);
+		}
+		
+		/**
+		 * verifies that when select all is called all of the groups
+		 * items are selected.  This test also verifies that if an invalid groupd
+		 * is passed the selection is not affected. 
+		 * 
+		 */
+		public function testSelectAll():void
+		{
+			// create six selection objects
+			var selection1:SelectionObject = new SelectionObject();
+			var selection2:SelectionObject = new SelectionObject();
+			var selection3:SelectionObject = new SelectionObject();
+			
+			// get a new id and then add the objects to the controller
+			var groupOne:int = SelectionController.generateNewId();
+			SelectionController.addItem(selection1, groupOne);
+			SelectionController.addItem(selection2, groupOne);
+			SelectionController.addItem(selection3, groupOne);
+			
+			SelectionController.selectAll(groupOne);
+			assertTrue("Selection1 was not selected.", selection1.selected);
+			assertTrue("Selection2 was not selected.", selection2.selected);
+			assertTrue("Selection3 was not selected.", selection3.selected);
+			
+			SelectionController.selectAll(333);
+			assertTrue("Selection1 was not selected.", selection1.selected);
+			assertTrue("Selection2 was not selected.", selection2.selected);
+			assertTrue("Selection3 was not selected.", selection3.selected);
 		}
 	}
 }

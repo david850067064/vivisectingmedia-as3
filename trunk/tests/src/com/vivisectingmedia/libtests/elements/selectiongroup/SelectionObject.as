@@ -23,7 +23,7 @@
  * ***** END LICENSE BLOCK ***** */
 package com.vivisectingmedia.libtests.elements.selectiongroup
 {
-	import com.vivisectingmedia.framework.controllers.interfaces.ISelectableObject;
+	import com.vivisectingmedia.framework.controllers.interfaces.ISelectable;
 	
 	import flexunit.framework.Assert;
 
@@ -34,7 +34,7 @@ package com.vivisectingmedia.libtests.elements.selectiongroup
 	 * @author James Polanco
 	 * 
 	 */
-	public class SelectionObject implements ISelectableObject
+	public class SelectionObject implements ISelectable
 	{
 		private var __selected:Boolean = false;
 		
