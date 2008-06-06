@@ -11,7 +11,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is ActionScript 3 ISelectableObject version 1.0.
+ * The Original Code is ActionScript 3 ISelectable version 1.0.
  *
  * The Initial Developer of the Original Code is
  * James Polanco (www.vivisectingmedia.com).
@@ -30,8 +30,16 @@ package com.vivisectingmedia.framework.controllers.interfaces
 	 * @author James Polanco
 	 * 
 	 */
-	public interface ISelectableObject
+	public interface ISelectable
 	{
+		/**
+		 * A read/write method that is used to set the selected state of an ISelectable item.
+		 * When a value of true is passed the item should be considered selected.  When a value
+		 * if false is passed the item should be considered deselected.
+		 *  
+		 * @param value The selected state of the ISelectable item.
+		 * 
+		 */
 		function set selected(value:Boolean):void
 		
 		function get selected():Boolean
