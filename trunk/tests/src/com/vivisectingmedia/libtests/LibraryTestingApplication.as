@@ -23,8 +23,10 @@
  * ***** END LICENSE BLOCK ***** */
 package com.vivisectingmedia.libtests
 {
+	import com.vivisectingmedia.flexunit.TestUtils;
 	import com.vivisectingmedia.libtests.tests.EventBrokerTests;
 	import com.vivisectingmedia.libtests.tests.HashTableTests;
+	import com.vivisectingmedia.libtests.tests.QueueTests;
 	import com.vivisectingmedia.libtests.tests.SelectionControllerTests;
 	
 	import flexunit.flexui.TestRunnerBase;
@@ -58,9 +60,13 @@ package com.vivisectingmedia.libtests
 			
 			// current test suites
 			
-			suite.addTest( EventBrokerTests.suite() );
-			suite.addTest( SelectionControllerTests.suite() );
-			suite.addTest( HashTableTests.suite() );
+			//*
+			suite.addTest( TestUtils.generateFullSuite(EventBrokerTests) );
+			suite.addTest( TestUtils.generateFullSuite(SelectionControllerTests) );
+			suite.addTest( TestUtils.generateFullSuite(HashTableTests) );
+			//*/
+			
+			suite.addTest( TestUtils.generateFullSuite(QueueTests) );
 			
 			return suite;
 		}
