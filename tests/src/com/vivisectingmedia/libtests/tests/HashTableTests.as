@@ -37,35 +37,6 @@ package com.vivisectingmedia.libtests.tests
 	public class HashTableTests extends TestCase
 	{
 		/**
-		 * Static method that creates the default suite of tests.
-		 *  
-		 * @return The active suite for the HashTableTests.
-		 * 
-		 */
-		public static function suite():TestSuite
-		{
-			var ts:TestSuite = new TestSuite();
-			
-			ts.addTest(new HashTableTests("testAddAndRetrieveItem"));
-			ts.addTest(new HashTableTests("testSameItemWithDifferentKeys"));
-			ts.addTest(new HashTableTests("testAddItemsUsingTheSameKey"));
-			ts.addTest(new HashTableTests("testAddAndRemoveItem"));
-			ts.addTest(new HashTableTests("testAddRemoveSameItemDifferentKeys"));
-			ts.addTest(new HashTableTests("testAddMultipleItemsThenRemoveAll"));
-			ts.addTest(new HashTableTests("testAddKeyCheckPosition"));
-			ts.addTest(new HashTableTests("testAddItemsGetAllItems"));
-			ts.addTest(new HashTableTests("testAddKeysGetAllKeys"));
-			ts.addTest(new HashTableTests("testVerifyExistingItems"));
-			ts.addTest(new HashTableTests("testVerifyNonExistingItems"));
-			ts.addTest(new HashTableTests("testVerifyExistingKeys"));
-			ts.addTest(new HashTableTests("testVerifyNonExistingKeys"));
-			ts.addTest(new HashTableTests("testIsEmpty"));
-			ts.addTest(new HashTableTests("testLength"));
-			
-			return ts;
-		}
-		
-		/**
 		 * TestCase Constructor.
 		 *  
 		 * @param methodName Test method to run.

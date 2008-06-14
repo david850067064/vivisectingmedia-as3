@@ -47,33 +47,6 @@ package com.vivisectingmedia.libtests.tests
 		private var methodCount:int = 0;
 		
 		/**
-		 * Static method that creates the default suite of tests.
-		 *  
-		 * @return The active suite for the EventBrokerTests.
-		 * 
-		 */
-		public static function suite():TestSuite
-		{
-			var ts:TestSuite = new TestSuite();
-			
-			ts.addTest(new EventBrokerTests("testSubscribeBroadcast"));
-			ts.addTest(new EventBrokerTests("testMultipleMethodsOnSingleInstance"));
-			ts.addTest(new EventBrokerTests("testMultipleObjectsWithSingleMethods"));
-			ts.addTest(new EventBrokerTests("testMultipleObjectsWithMultuipleMethods"));
-			ts.addTest(new EventBrokerTests("testSameObjectDifferentEvents"));
-			ts.addTest(new EventBrokerTests("testSameObjectSameMethodDifferentEvents"));
-			ts.addTest(new EventBrokerTests("testMultipleObjectToMultipleEvent"));
-			ts.addTest(new EventBrokerTests("testBroadcastToNoListener"));
-			ts.addTest(new EventBrokerTests("testBasicUnsubscribe"));
-			ts.addTest(new EventBrokerTests("testUnsubscribeUnregisteredListener"));
-			ts.addTest(new EventBrokerTests("verifyUnsubscribeHappensAfterBroadcast"));
-			ts.addTest(new EventBrokerTests("verifySubscribeHappensAfterBroadcast"));
-			ts.addTest(new EventBrokerTests("testClearAllSubscriptions"));
-			
-			return ts;
-		}
-		
-		/**
 		 * Constructor.
 		 *  
 		 * @param methodName Name of the method to run for the test.

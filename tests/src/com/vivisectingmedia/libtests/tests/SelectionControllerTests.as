@@ -31,35 +31,7 @@ package com.vivisectingmedia.libtests.tests
 
 	public class SelectionControllerTests extends TestCase
 	{
-		
-		/**
-		 * Helper method that returns all of the suites tests.
-		 *  
-		 * @return Complete test suite.
-		 * 
-		 */
-		static public function suite():TestSuite
-		{
-			var ts:TestSuite = new TestSuite();
-			
-			ts.addTest(new SelectionControllerTests("testBasicSelection"));
-			ts.addTest(new SelectionControllerTests("testBasicMultipleSelectionGroups"));
-			ts.addTest(new SelectionControllerTests("testSelectionOfNongroupedItems"));
-			ts.addTest(new SelectionControllerTests("testBasicDeselectAll"));
-			ts.addTest(new SelectionControllerTests("testDeselectAllWithInvalidGroup"));
-			ts.addTest(new SelectionControllerTests("testGetGroupIDForValidItem"));
-			ts.addTest(new SelectionControllerTests("testGetGroupIdWithInvalidItem"));
-			ts.addTest(new SelectionControllerTests("testRemoveAllItemsFromValidGroup"));
-			ts.addTest(new SelectionControllerTests("testRemoveAllItemsForInvalidGroup"));
-			ts.addTest(new SelectionControllerTests("testRemoveSingleItemFromGroup"));
-			ts.addTest(new SelectionControllerTests("testRemovingUngroupedItem"));
-			ts.addTest(new SelectionControllerTests("testClearAll"));
-			ts.addTest(new SelectionControllerTests("testRegrouping"));
-			ts.addTest(new SelectionControllerTests("testSelectAll"));
-			
-			return ts;
-		}
-		
+
 		/**
 		 * Constructor. 
 		 * @param param
