@@ -131,7 +131,7 @@ package com.vivisectingmedia.framework.datastructures.utils
 			main:switch(_direction)
 			{
 				// process from the first to the last
-				case LIFO:
+				case FIFO:
 					for(i = 0; i < len; i++)
 					{
 						if(_table[i] == item)
@@ -139,7 +139,7 @@ package com.vivisectingmedia.framework.datastructures.utils
 							if(++count > numberOfItems)
 							{
 								// push the rest and end
-								clone.concat(_table.slice((i+1)));
+								clone = clone.concat(_table.slice(i));
 								break main;
 							}
 						} else {
@@ -149,19 +149,19 @@ package com.vivisectingmedia.framework.datastructures.utils
 				break;
 				
 				// process from the last to the first
-				case FIFO:
-					for(i = len; i > -1; i--)
+				case LIFO:
+					for(i = (len - 1); i > -1; i--)
 					{
 						if(_table[i] == item)
 						{
 							if(++count > numberOfItems)
 							{
 								// push the rest and end
-								clone.concat(_table.slice(0, (i-1)));
+								clone = _table.slice(0, i+1).concat(clone);
 								break main;
 							}
 						} else {
-							clone.push(_table[i]);
+							clone.unshift(_table[i]);
 						}
 					}
 				break;
