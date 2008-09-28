@@ -25,6 +25,7 @@
 package com.vivisectingmedia.libtests
 {
 	import com.vivisectingmedia.flexunit.TestUtils;
+	import com.vivisectingmedia.libtests.tests.AdjustableDateTests;
 	import com.vivisectingmedia.libtests.tests.EventBrokerTests;
 	import com.vivisectingmedia.libtests.tests.HashTableTests;
 	import com.vivisectingmedia.libtests.tests.QueueTests;
@@ -67,7 +68,7 @@ package com.vivisectingmedia.libtests
 			suite.addTest( TestUtils.generateFullSuite(HashTableTests) );
 			suite.addTest( TestUtils.generateFullSuite(QueueTests) );
 			//*/
-			
+			suite.addTest( TestUtils.generateFullSuite(AdjustableDateTests) );
 			
 			return suite;
 		}
