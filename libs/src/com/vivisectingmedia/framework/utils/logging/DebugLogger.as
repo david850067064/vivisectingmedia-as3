@@ -212,10 +212,10 @@ package com.vivisectingmedia.framework.utils.logging
 
 /* PRIVTE SINGLETON CLASS */
 
-import com.vivisectingmedia.flog.DebugLogger;
-import com.vivisectingmedia.flog.DebugMessage;
 import com.vivisectingmedia.framework.utils.LocalConnectionManager;
 import com.vivisectingmedia.framework.utils.events.LocalConnectionEvent;
+import com.vivisectingmedia.framework.utils.logging.DebugLogger;
+import com.vivisectingmedia.framework.utils.logging.DebugMessage;
 	
 
 class DebugLog
