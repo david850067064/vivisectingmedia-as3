@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fpanel:FlogWindowedApplication
+	xmlns:fpanel="com.vivisectingmedia.flogpanel.*"
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	width="840"
+	height="620" 
+	layout="absolute">
+	<mx:Script>
+		<![CDATA[
+			import com.vivisectingmedia.flogpanel.ui.DateFieldRender;
+			import com.vivisectingmedia.flogpanel.ui.MessageIconRenderer;
+		]]>
+	</mx:Script>
+	
+	<!-- MENU SYSTEM -->
+	<mx:MenuBar id="menu_bar_control" labelField="@label" width="100%">
+		<mx:XMLList xmlns="">
+			<menuItem label="File">
+				<menuItem label="Settings..." />
+			</menuItem>
+			<menuItem label="Help">
+				<menuItem label="Donate" />
+				<menuItem label="About" />
+			</menuItem>
+		</mx:XMLList>
+	</mx:MenuBar>
+	
+	<mx:HBox horizontalAlign="right" verticalAlign="middle" right="10" top="25">
+		<mx:Label text="Filter Settings:" />
+		<mx:ComboBox id="filter_list" dataProvider="{messageFilterTypes}" labelField="name" change="filterMessages()">
+		</mx:ComboBox>
+	</mx:HBox>
+	<mx:VDividedBox left="10" right="10" top="50" bottom="10">
+		<mx:TabNavigator id="connection_displays" width="100%" height="100%">
+		
+			<!-- FIRST CONNECTION -->
+			<mx:VBox width="100%" height="100%" label="connection_1">
+				<mx:DataGrid dataProvider="{filteredMessageList}" width="100%" height="100%">
+					<mx:columns>
+						<mx:DataGridColumn dataField="time" headerText="Time" width="90" itemRenderer="com.vivisectingmedia.flogpanel.ui.DateFieldRender"  />
+						<mx:DataGridColumn dataField="type" headerText="" width="25" itemRenderer="com.vivisectingmedia.flogpanel.ui.MessageIconRenderer" />
+						<mx:DataGridColumn dataField="message" headerText="Message" />
+					</mx:columns>
+				</mx:DataGrid>
+			</mx:VBox>
+			
+		</mx:TabNavigator>
+		
+		<mx:TextArea id="status_field" width="100%" height="10%" borderStyle="inset"/>
+	
+	</mx:VDividedBox>
+	
+</fpanel:FlogWindowedApplication>

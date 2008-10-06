@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="vertical" creationComplete="handleCreation()">
+	<mx:Script>
+		<![CDATA[
+			import com.vivisectingmedia.framework.utils.logging.DebugLogger;
+			import com.vivisectingmedia.framework.utils.logging.DebugMessage;
+			
+			public function handleCreation():void
+			{
+				DebugLogger.info("creation complete.");
+			}
+			
+			public function testMessage(type:int):void
+			{
+				switch(type)
+				{
+					case DebugMessage.INFO:
+						DebugLogger.info("Test INFO statement.");
+					break;
+					
+					case DebugMessage.DEBUG:
+						DebugLogger.debug("Test DEBUG statement.");
+					break;
+					
+					case DebugMessage.WARN:
+						DebugLogger.warn("Test WARN statement.");
+					break;
+					
+					case DebugMessage.ERROR:
+						DebugLogger.error("Test ERROR statement.");
+					break;
+					
+					case DebugMessage.FATAL:
+						DebugLogger.fatal("Test FATAL statement.");
+					break;
+				}
+				
+			}
+			
+			public function setLevel(level:int):void
+			{
+				DebugLogger.messageLevel = level;
+			}
+			
+			public function disableDebugging():void
+			{
+				DebugLogger.debuggingEnabled = false;
+			}
+		]]>
+	</mx:Script>
+	<mx:HBox>
+		<mx:Button click="testMessage(DebugMessage.INFO)" label="test INFO" />
+		<mx:Button click="testMessage(DebugMessage.DEBUG)" label="test DEBUG" />
+		<mx:Button click="testMessage(DebugMessage.WARN)" label="test WARN" />
+		<mx:Button click="testMessage(DebugMessage.ERROR)" label="test ERROR" />
+		<mx:Button click="testMessage(DebugMessage.FATAL)" label="test FATAL" />
+	</mx:HBox>
+	
+	<mx:HBox>
+		<mx:Button click="setLevel(DebugMessage.INFO)" label="set level INFO" />
+		<mx:Button click="setLevel(DebugMessage.DEBUG)" label="set level DEBUG" />
+		<mx:Button click="setLevel(DebugMessage.WARN)" label="set level WARN" />
+		<mx:Button click="setLevel(DebugMessage.ERROR)" label="set level ERROR" />
+		<mx:Button click="setLevel(DebugMessage.FATAL)" label="set level FATAL" />
+	</mx:HBox>
+	<mx:Button click="disableDebugging()" label="disable debugging" />
+</mx:Application>
