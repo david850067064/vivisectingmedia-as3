@@ -33,6 +33,7 @@ package com.vivisectingmedia.debugloggerpanel
 	import com.vivisectingmedia.framework.utils.logging.DebugMessage;
 	
 	import mx.collections.ArrayCollection;
+	import mx.controls.CheckBox;
 	import mx.controls.ComboBox;
 	import mx.controls.TextArea;
 	import mx.core.WindowedApplication;
@@ -56,6 +57,7 @@ package com.vivisectingmedia.debugloggerpanel
 		/* PUBLIC COMPONENTS */
 		[Bindable] public var status_field:TextArea;
 		[Bindable] public var filter_list:ComboBox;
+		[Bindable] public var cache_message_toggle:CheckBox;
 		
 		/* PROTECTED PROPERTIES */
 		protected var connection:LocalConnectionManager;
@@ -170,7 +172,13 @@ package com.vivisectingmedia.debugloggerpanel
 				var msg:DebugMessage = DebugMessage(debugMessages[i]);
 				if(msg.type >= level)
 				{
-					filteredMessageList.addItem(msg);
+					if(cache_message_toggle && cache_message_toggle.selected)
+					{
+						filteredMessageList.addItem(msg);	
+					} else if(msg.type != DebugMessage.SYSTEM_MESSAGE) {
+						filteredMessageList.addItem(msg);
+					}
+					
 				}
 			}
 		}

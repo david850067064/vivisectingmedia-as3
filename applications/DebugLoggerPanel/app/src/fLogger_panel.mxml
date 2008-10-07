@@ -28,7 +28,7 @@
 <fpanel:DebugLoggerWindowedApplication
 	xmlns:fpanel="com.vivisectingmedia.debugloggerpanel.*"
 	xmlns:mx="http://www.adobe.com/2006/mxml"
-	width="840"
+	width="1000"
 	height="620" 
 	layout="absolute">
 	
@@ -61,12 +61,18 @@
 		</mx:XMLList>
 	</mx:MenuBar>
 	
-	<mx:HBox horizontalAlign="right" verticalAlign="middle" right="10" top="25">
-		<mx:Label text="Filter Settings:" />
-		<mx:ComboBox id="filter_list" dataProvider="{messageFilterTypes}" labelField="name" change="filterMessages()">
-		</mx:ComboBox>
+	<mx:HBox horizontalAlign="right" verticalAlign="middle" top="10" right="10">
+		<mx:Form verticalGap="0">
+			<mx:FormItem label="@Resource(key='ui_filter_settings', bundle='strings')">
+				<mx:ComboBox id="filter_list" dataProvider="{messageFilterTypes}" labelField="name" change="filterMessages()" />
+			</mx:FormItem>
+			<mx:FormItem>
+				<mx:CheckBox id="cache_message_toggle" selected="true" label="@Resource(key='ui_cache_toggle', bundle='strings')" change="filterMessages()" />
+			</mx:FormItem>
+		</mx:Form>
 	</mx:HBox>
-	<mx:VDividedBox left="10" right="10" top="50" bottom="10">
+	
+	<mx:VDividedBox left="10" right="10" top="60" bottom="10">
 		<mx:TabNavigator id="connection_displays" width="100%" height="100%">
 		
 			<!-- FIRST CONNECTION -->
@@ -75,6 +81,8 @@
 					<mx:columns>
 						<mx:DataGridColumn dataField="time" headerText="Time" width="90" itemRenderer="com.vivisectingmedia.debugloggerpanel.ui.DateFieldRender"  />
 						<mx:DataGridColumn dataField="type" headerText="" width="25" itemRenderer="com.vivisectingmedia.debugloggerpanel.ui.MessageIconRenderer" />
+						<mx:DataGridColumn dataField="className" width="120" headerText="Class" />
+						<mx:DataGridColumn dataField="methodName" width="120" headerText="Method" />
 						<mx:DataGridColumn dataField="message" headerText="Message" />
 					</mx:columns>
 				</mx:DataGrid>
@@ -82,7 +90,7 @@
 			
 		</mx:TabNavigator>
 		
-		<mx:TextArea id="status_field" width="100%" height="10%" borderStyle="inset" htmlText="{DataModel.instance.consuleText}"/>
+		<mx:TextArea editable="false" id="status_field" width="100%" height="10%" borderStyle="inset" htmlText="{DataModel.instance.consuleText}" />
 	
 	</mx:VDividedBox>
 	
