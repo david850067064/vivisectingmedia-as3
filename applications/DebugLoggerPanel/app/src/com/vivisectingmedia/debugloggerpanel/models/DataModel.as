@@ -90,11 +90,11 @@ package com.vivisectingmedia.debugloggerpanel.models
 			switch(type)
 			{
 				case MESSAGE_ERROR:
-					consuleText += "<font color='#990000'>"+message+"</font>"
+					consuleText += "<font color='#990000'>"+message+"</font><br/>"
 				break;
 				
 				default:
-					consuleText += "<font color='#009900'>"+message+"</font>"
+					consuleText += "<font color='#009900'>"+message+"</font><br/>"
 			}
 		}
 		

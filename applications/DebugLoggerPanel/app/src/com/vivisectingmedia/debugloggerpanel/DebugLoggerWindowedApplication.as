@@ -24,7 +24,9 @@
  * ***** END MIT LICENSE BLOCK ***** */
 package com.vivisectingmedia.debugloggerpanel
 {
+	import com.vivisectingmedia.debugloggerpanel.dataobjects.ConnectionDO;
 	import com.vivisectingmedia.debugloggerpanel.models.DataModel;
+	import com.vivisectingmedia.framework.datastructures.utils.HashTable;
 	import com.vivisectingmedia.framework.utils.LocalConnectionManager;
 	import com.vivisectingmedia.framework.utils.events.LocalConnectionEvent;
 	import com.vivisectingmedia.framework.utils.logging.DebugLogger;
@@ -61,12 +63,14 @@ package com.vivisectingmedia.debugloggerpanel
 		
 		/* PRIVATE PROPERTES */
 		private var _connected:Boolean = false;
+		private var _currentConnectedApps:HashTable;
 		
 		public function DebugLoggerWindowedApplication()
 		{
 			super();
 			debugMessages = new Array();
 			filteredMessageList = new ArrayCollection();
+			_currentConnectedApps = new HashTable();
 			model = DataModel.instance;
 			defineFilters();
 		}
@@ -122,10 +126,37 @@ package com.vivisectingmedia.debugloggerpanel
 		
 		public function connectToClient(msg:DebugMessage):void
 		{
-			if(!_connected && msg.type == DebugMessage.HANDSHAKE)
+			switch(msg.type)
 			{
-				var msg:DebugMessage = new DebugMessage("creation", DebugMessage.HANDSHAKE);
-				connection.sendMessage(DebugLogger.DEBUG_LOGGER_BROADCASTER, "messageHandshake", msg);
+				case DebugMessage.HANDSHAKE:
+					// look at the id, and see if we have established a connection yet.
+					// if we have this is a bad thing.
+					if(_currentConnectedApps.containsKey(msg.id))
+					{
+						// we have already established a connection
+						model.addConsuleText(resourceManager.getString('errors', 'console_reconnection'), DataModel.MESSAGE_ERROR);
+					} else {
+						// we have a new app, setup the tabs
+						newAppConnected(msg.id);
+						
+						// establish a unqiue connection
+						var conn:ConnectionDO = new ConnectionDO();
+						conn.id = DebugLogger.PANEL_PREFIX + msg.id;
+						conn.name = msg.id;
+						conn.connection = new LocalConnectionManager(this, conn.id);
+						
+						// add to the table
+						_currentConnectedApps.addItem(msg.id, conn);
+						
+						// set up the connection
+						conn.connection.addEventListener(LocalConnectionEvent.CONNECTION_ERROR, handleConnectionEvent);
+						conn.connection.addEventListener(LocalConnectionEvent.SENT_MESSAGE_ERROR, handleConnectionEvent);
+						conn.connection.addEventListener(LocalConnectionEvent.STATUS_MESSAGE, handleConnectionEvent);
+						
+						var outgoing:DebugMessage = new DebugMessage(conn.id, DebugMessage.HANDSHAKE);
+						connection.sendMessage(DebugLogger.DEBUG_LOGGER_BROADCASTER, "establishPrivateConnection", outgoing);
+					}
+				break;
 			}
 		}
 		
@@ -167,6 +198,28 @@ package com.vivisectingmedia.debugloggerpanel
 					}
 				break;
 			}
+		}
+		
+		protected function newAppConnected(id:String):void
+		{
+			// for now clear the queue
+			filteredMessageList.removeAll();
+			debugMessages = new Array();
+			
+			// remove all existing connections
+			var connList:Array = _currentConnectedApps.getAllItems();
+			for each(var conn:ConnectionDO in connList)
+			{
+				conn.connection.removeEventListener(LocalConnectionEvent.CONNECTION_ERROR, handleConnectionEvent);
+				conn.connection.removeEventListener(LocalConnectionEvent.SENT_MESSAGE_ERROR, handleConnectionEvent);
+				conn.connection.removeEventListener(LocalConnectionEvent.STATUS_MESSAGE, handleConnectionEvent);
+				conn.connection.disconnect();
+				model.addConsuleText(resourceManager.getString('strings', 'console_connection_end'), DataModel.MESSAGE_ERROR);
+				_connected = false;
+			}
+			
+			_currentConnectedApps.removeAll();
+			
 		}
 	}
 }
