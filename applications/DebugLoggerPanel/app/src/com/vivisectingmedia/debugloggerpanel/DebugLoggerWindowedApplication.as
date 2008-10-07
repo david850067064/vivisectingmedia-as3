@@ -1,4 +1,28 @@
-package com.vivisectingmedia.flogpanel
+/* ***** BEGIN MIT LICENSE BLOCK *****
+ * 
+ * Copyright (c) 2008 James Polanco
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ *
+ * ***** END MIT LICENSE BLOCK ***** */
+package com.vivisectingmedia.debugloggerpanel
 {
 	import com.vivisectingmedia.framework.utils.LocalConnectionManager;
 	import com.vivisectingmedia.framework.utils.events.LocalConnectionEvent;
@@ -10,23 +34,33 @@ package com.vivisectingmedia.flogpanel
 	import mx.controls.TextArea;
 	import mx.core.WindowedApplication;
 
-	public class FlogWindowedApplication extends WindowedApplication
+	/**
+	 * The DebugLoggerWindowedApplication is the backing Application class for
+	 * the DebugLogger AIR Panel. 
+	 * 
+	 * @author James Polanco
+	 * 
+	 */
+	public class DebugLoggerWindowedApplication extends WindowedApplication
 	{
 		public var debugMessages:Array;
 		public var maxMessages:int = 1000;
 		
+		/* PUBLIC PROPERTIES */
 		[Bindable] public var messageFilterTypes:ArrayCollection;
 		[Bindable] public var filteredMessageList:ArrayCollection;
 		
-		// COMPONENTS
+		/* PUBLIC COMPONENTS */
 		[Bindable] public var status_field:TextArea;
 		[Bindable] public var filter_list:ComboBox;
 		
+		/* PROTECTED PROPERTIES */
 		protected var connection:LocalConnectionManager;
 		
+		/* PRIVATE PROPERTES */
 		private var _connected:Boolean = false;
 		
-		public function FlogWindowedApplication()
+		public function DebugLoggerWindowedApplication()
 		{
 			super();
 			debugMessages = new Array();
