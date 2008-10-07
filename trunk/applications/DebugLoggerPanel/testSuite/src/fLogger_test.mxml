@@ -28,12 +28,14 @@
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="vertical" creationComplete="handleCreation()">
 	<mx:Script>
 		<![CDATA[
+			import com.vivisectingmedia.framework.utils.logging.ClassDebugLogger;
 			import com.vivisectingmedia.framework.utils.logging.DebugLogger;
 			import com.vivisectingmedia.framework.utils.logging.DebugMessage;
-			
+			public var logger:ClassDebugLogger;
 			public function handleCreation():void
 			{
-				DebugLogger.info("creation complete.",fLogger_test);
+				logger = DebugLogger.getClassLogger(fLogger_test);
+				logger.info("creation complete.");
 			}
 			
 			public function testMessage(type:int):void
@@ -41,23 +43,23 @@
 				switch(type)
 				{
 					case DebugMessage.INFO:
-						DebugLogger.info("Test INFO statement.",fLogger_test);
+						logger.info("Test INFO statement.");
 					break;
 					
 					case DebugMessage.DEBUG:
-						DebugLogger.debug("Test DEBUG statement.");
+						logger.debug("Test DEBUG statement.");
 					break;
 					
 					case DebugMessage.WARN:
-						DebugLogger.warn("Test WARN statement.");
+						logger.warn("Test WARN statement.");
 					break;
 					
 					case DebugMessage.ERROR:
-						DebugLogger.error("Test ERROR statement.");
+						logger.error("Test ERROR statement.");
 					break;
 					
 					case DebugMessage.FATAL:
-						DebugLogger.fatal("Test FATAL statement.");
+						logger.fatal("Test FATAL statement.");
 					break;
 				}
 				

@@ -98,7 +98,7 @@ package com.vivisectingmedia.framework.utils.logging
 		 * acceptable issue in some cases.
 		 * 
 		 * @param message Text message to be dispatched and displayed.
-		 * @param classReference The class in which the message wwas generated. Optional
+		 * @param classReference The class in which the message was generated. Optional
 		 * @param methodReference The method in which the message was generated. Optional
 		 * @param source Identify where the message was generated (ActionScript, JavaScript). Optional		 
 		 * 
@@ -116,7 +116,7 @@ package com.vivisectingmedia.framework.utils.logging
 		 * be resolved before release.
 		 * 
 		 * @param message Text message to be dispatched and displayed.
-		 * @param classReference The class in which the message wwas generated. Optional
+		 * @param classReference The class in which the message was generated. Optional
 		 * @param methodReference The method in which the message was generated. Optional
 		 * @param source Identify where the message was generated (ActionScript, JavaScript). Optional 
 		 * 
@@ -133,7 +133,7 @@ package com.vivisectingmedia.framework.utils.logging
 		 * that the application can no longer continue operation.  Fatal errors are the highest level of failure.
 		 * 
 		 * @param message Text message to be dispatched and displayed.
-		 * @param classReference The class in which the message wwas generated. Optional
+		 * @param classReference The class in which the message was generated. Optional
 		 * @param methodReference The method in which the message was generated. Optional
 		 * @param source Identify where the message was generated (ActionScript, JavaScript). Optional
 		 * 
@@ -206,6 +206,9 @@ package com.vivisectingmedia.framework.utils.logging
 			}
 			
 			instance.setMessageLevel(__messageLevel);
+		}
+		static public function getClassLogger(classReference:Class):ClassDebugLogger {
+			return new ClassDebugLogger(classReference);
 		}
 		
 		// PRIVATE METHODS
@@ -307,7 +310,7 @@ class DebugLog
 	 * 
 	 * @param msg Text message to be dispatched and displayed.
 	 * @param type Type of message that is to be displayed
-	 * @param classReference The class in which the message wwas generated. Optional
+	 * @param classReference The class in which the message was generated. Optional
 	 * @param methodReference The method in which the message was generated. Optional
 	 * @param source Identify where the message was generated (ActionScript, JavaScript). Optional
 	 * 
