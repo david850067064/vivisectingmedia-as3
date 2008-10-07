@@ -24,6 +24,7 @@
  * ***** END MIT LICENSE BLOCK ***** */
 package com.vivisectingmedia.debugloggerpanel
 {
+	import com.vivisectingmedia.debugloggerpanel.models.DataModel;
 	import com.vivisectingmedia.framework.utils.LocalConnectionManager;
 	import com.vivisectingmedia.framework.utils.events.LocalConnectionEvent;
 	import com.vivisectingmedia.framework.utils.logging.DebugLogger;
@@ -56,6 +57,7 @@ package com.vivisectingmedia.debugloggerpanel
 		
 		/* PROTECTED PROPERTIES */
 		protected var connection:LocalConnectionManager;
+		protected var model:DataModel;
 		
 		/* PRIVATE PROPERTES */
 		private var _connected:Boolean = false;
@@ -65,6 +67,7 @@ package com.vivisectingmedia.debugloggerpanel
 			super();
 			debugMessages = new Array();
 			filteredMessageList = new ArrayCollection();
+			model = DataModel.instance;
 			defineFilters();
 		}
 		
@@ -72,18 +75,18 @@ package com.vivisectingmedia.debugloggerpanel
 		{
 			// define filters
 			messageFilterTypes = new ArrayCollection();
-			messageFilterTypes.addItem({name:"ALL", value: DebugMessage.INFO});
-			messageFilterTypes.addItem({name:"DEBUG", value: DebugMessage.DEBUG});
-			messageFilterTypes.addItem({name:"WARN", value: DebugMessage.WARN});
-			messageFilterTypes.addItem({name:"ERROR", value: DebugMessage.ERROR});
-			messageFilterTypes.addItem({name:"FATAL", value: DebugMessage.FATAL});
+			messageFilterTypes.addItem({name:resourceManager.getString('strings', 'message_all'), value: DebugMessage.INFO});
+			messageFilterTypes.addItem({name:resourceManager.getString('strings', 'message_debug'), value: DebugMessage.DEBUG});
+			messageFilterTypes.addItem({name:resourceManager.getString('strings', 'message_warn'), value: DebugMessage.WARN});
+			messageFilterTypes.addItem({name:resourceManager.getString('strings', 'message_error'), value: DebugMessage.ERROR});
+			messageFilterTypes.addItem({name:resourceManager.getString('strings', 'message_fatal'), value: DebugMessage.FATAL});
 		}
 		
 		override public function initialize():void
 		{
 			super.initialize();
 			
-			status_field.htmlText = "<font color='#009900'>looking for connection...</font>";
+			model.addConsuleText(resourceManager.getString('strings', 'console_connection_waiting'));
 			connection = new LocalConnectionManager(this, DebugLogger.DEBUG_LOGGER_SUBSCRIBER);
 			
 			// register events
@@ -101,7 +104,7 @@ package com.vivisectingmedia.debugloggerpanel
 			if(!_connected)
 			{
 				_connected = true;
-				status_field.htmlText += "<font color='#009900'>connection made.</font>";
+				model.addConsuleText(resourceManager.getString('strings', 'console_connection_made'));
 			}
 			
 			// add item to the list
@@ -146,11 +149,12 @@ package com.vivisectingmedia.debugloggerpanel
 			switch(event.type)
 			{
 				case LocalConnectionEvent.CONNECTION_ERROR:
-					trace("fPanel: connection error");
+					model.addConsuleText(resourceManager.getString('errors', 'console_connection'), DataModel.MESSAGE_ERROR);
 				break;
 				
 				case LocalConnectionEvent.SENT_MESSAGE_ERROR:
-					trace("fPanel: connection message error -- " + event.errorMessage);
+					var msg:String = resourceManager.getString('errors', 'console_sent_connection') + event.errorMessage;
+					model.addConsuleText(msg, DataModel.MESSAGE_ERROR);
 				break;
 				
 				case LocalConnectionEvent.STATUS_MESSAGE:
@@ -158,7 +162,7 @@ package com.vivisectingmedia.debugloggerpanel
 					{
 						if(_connected)
 						{
-							status_field.htmlText += "unknown error has occured.";
+							model.addConsuleText(resourceManager.getString('errors', 'console_unknow'), DataModel.MESSAGE_ERROR);
 						}
 					}
 				break;
