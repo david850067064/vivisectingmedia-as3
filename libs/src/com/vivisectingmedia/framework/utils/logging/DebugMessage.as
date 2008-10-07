@@ -60,14 +60,20 @@ package com.vivisectingmedia.framework.utils.logging
 		 * @param passedTime The time the message stores as the creation time.
 		 * 
 		 */
-		public function DebugMessage(msg:String = "", msgType:int = 0,classReference:Class = null, methodReference:String = null, source:String = null, passedTime:Date = null)
+		public function DebugMessage(msg:String = "", msgType:int = 0,classReference:* = null, methodReference:String = null, source:String = null, passedTime:Date = null)
 		{
 			super();
 			message = msg;
 			type = msgType;
-			className = (classReference) ? Object(classReference).valueOf() : "";
 			
-			className = className.replace(/(\[class|\]|\s)/g, "");
+			if(classReference is Class) {
+				className = Object(classReference).valueOf();
+				className = className.replace(/(\[class|\]|\s)/g, "");
+			}
+			else {
+				className = classReference;
+			}		
+			
 			methodName = methodReference;
 			sourceType = (source) ? source : DebugMessage.SOURCE_ACTIONSCRIPT;
 			

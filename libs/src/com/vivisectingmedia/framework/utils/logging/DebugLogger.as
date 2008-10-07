@@ -29,6 +29,7 @@ package com.vivisectingmedia.framework.utils.logging
 		// PRIVATE
 		static private var _inst:DebugLog; // stores singleton instance
 		static private var __enabled:Boolean = true; // determines if the logging messages should be processed
+		static private var __externalInterfaceEnabled:Boolean = true // determines if the externalInterface api is exposed for JavaScript logging
 		static private var __cacheLimit:int = 500; // the default limit of the cache
 		static private var __messageLevel:int = DebugMessage.INFO // the current message level
 		
@@ -67,7 +68,7 @@ package com.vivisectingmedia.framework.utils.logging
 		 * @param source Identify where the message was generated (ActionScript, JavaScript). Optional
 		 * 
 		 */
-		static public function info(message:String, classReference:Class = null, methodReference:String = null, sourceType:String = null):void
+		static public function info(message:String, classReference:* = null, methodReference:String = null, sourceType:String = null):void
 		{
 			if(!__enabled) return;
 			if(__messageLevel > DebugMessage.INFO) return;
@@ -85,7 +86,7 @@ package com.vivisectingmedia.framework.utils.logging
 		 * @param source Identify where the message was generated (ActionScript, JavaScript). Optional
 		 * 
 		 */
-		static public function debug(message:String, classReference:Class = null, methodReference:String = null, sourceType:String = null):void
+		static public function debug(message:String, classReference:* = null, methodReference:String = null, sourceType:String = null):void
 		{
 			if(!__enabled) return;
 			if(__messageLevel > DebugMessage.DEBUG) return;
@@ -103,7 +104,7 @@ package com.vivisectingmedia.framework.utils.logging
 		 * @param source Identify where the message was generated (ActionScript, JavaScript). Optional		 
 		 * 
 		 */
-		static public function warn(message:String, classReference:Class = null, methodReference:String = null, sourceType:String = null):void 
+		static public function warn(message:String, classReference:* = null, methodReference:String = null, sourceType:String = null):void 
 		{
 			if(!__enabled) return;
 			if(__messageLevel > DebugMessage.WARN) return;
@@ -121,7 +122,7 @@ package com.vivisectingmedia.framework.utils.logging
 		 * @param source Identify where the message was generated (ActionScript, JavaScript). Optional 
 		 * 
 		 */
-		static public function error(message:String, classReference:Class = null, methodReference:String = null, sourceType:String = null):void
+		static public function error(message:String, classReference:* = null, methodReference:String = null, sourceType:String = null):void
 		{
 			if(!__enabled) return;
 			if(__messageLevel > DebugMessage.ERROR) return;
@@ -138,7 +139,7 @@ package com.vivisectingmedia.framework.utils.logging
 		 * @param source Identify where the message was generated (ActionScript, JavaScript). Optional
 		 * 
 		 */
-		static public function fatal(message:String, classReference:Class = null, methodReference:String = null, sourceType:String = null):void
+		static public function fatal(message:String, classReference:* = null, methodReference:String = null, sourceType:String = null):void
 		{
 			if(!__enabled) return;
 			instance.sendMessage(message, DebugMessage.FATAL, classReference, methodReference, sourceType);
@@ -163,6 +164,16 @@ package com.vivisectingmedia.framework.utils.logging
 		{
 			return __enabled;
 		}
+		
+		static public function set externalInterfaceEnabled(enabled:Boolean):void {
+			__externalInterfaceEnabled = enabled;
+			instance.setExternalInterface(enabled);
+		}
+		
+		static public function get externalInterfaceEnabled():Boolean {
+			return __externalInterfaceEnabled;
+		}
+		
 		
 		/**
 		 * Defines the number of cached items that should be stored before the fist item in the cache is removed.  If the cache limit is reached before
@@ -234,6 +245,9 @@ import com.vivisectingmedia.framework.utils.LocalConnectionManager;
 import com.vivisectingmedia.framework.utils.events.LocalConnectionEvent;
 import com.vivisectingmedia.framework.utils.logging.DebugLogger;
 import com.vivisectingmedia.framework.utils.logging.DebugMessage;
+import com.vivisectingmedia.framework.utils.logging.ExternalInterfaceDebugLogger;
+
+import flash.external.ExternalInterface;
 	
 
 class DebugLog
@@ -245,6 +259,8 @@ class DebugLog
 	private var _messageLevel:int = 0;
 	private var _inCache:Boolean = true;
 	private var _enabled:Boolean = true;
+	private var _externalInterfaceHasBeenEnabled:Boolean = false;
+	private var _externalInterfaceEnabled:Boolean = false;
 	
 	private var _connection:LocalConnectionManager;
 	
@@ -272,7 +288,19 @@ class DebugLog
 			_cacheLog = new Array();
 		}
 	}
+	public function setExternalInterface(value:Boolean):void {
+		// Turn the API on
+		if(value && !_externalInterfaceEnabled) {
+			_externalInterfaceEnabled = value;
+			openExternalInterfaceAPI();
+		}
+		// Turn the API off
+		else if(_externalInterfaceEnabled) {
+			_externalInterfaceEnabled = value;
+		}
+		
 	
+	}
 	public function setCacheLimit(value:int):void
 	{
 		_cacheLimit = value;
@@ -315,7 +343,7 @@ class DebugLog
 	 * @param source Identify where the message was generated (ActionScript, JavaScript). Optional
 	 * 
 	 */
-	public function sendMessage(msg:String, type:int, classReference:Class = null, methodReference:String = null, sourceType:String = null):void
+	public function sendMessage(msg:String, type:int, classReference:* = null, methodReference:String = null, sourceType:String = null):void
 	{
 		if(!_enabled) return;
 		var dMsg:DebugMessage = new DebugMessage(msg, type, classReference, methodReference, sourceType);
@@ -385,6 +413,16 @@ class DebugLog
 		_connection.sendMessage(DebugLogger.DEBUG_LOGGER_SUBSCRIBER, "debugMessageSent", msg);
 	}
 	
+	private function openExternalInterfaceAPI():void {
+		if(!_externalInterfaceHasBeenEnabled) {
+			ExternalInterface.addCallback("info", ExternalInterfaceDebugLogger.info);
+			ExternalInterface.addCallback("debug", ExternalInterfaceDebugLogger.debug);
+			ExternalInterface.addCallback("warn", ExternalInterfaceDebugLogger.warn);
+			ExternalInterface.addCallback("error", ExternalInterfaceDebugLogger.error);
+			ExternalInterface.addCallback("fatal", ExternalInterfaceDebugLogger.fatal);
+			_externalInterfaceHasBeenEnabled = true
+		}
+	}
 	internal function startConnection():void
 	{
 		_connection = new LocalConnectionManager(this, DebugLogger.DEBUG_LOGGER_BROADCASTER);
