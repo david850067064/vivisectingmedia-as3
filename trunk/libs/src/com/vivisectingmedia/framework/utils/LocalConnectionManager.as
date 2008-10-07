@@ -129,6 +129,24 @@ package com.vivisectingmedia.framework.utils
 		}
 		
 		/**
+		 * Ends the current local conenction session and removes all handlers
+		 * so that Garbage collection can occur. 
+		 * 
+		 */		
+		public function disconnect():void
+		{
+			try
+			{
+				connection.close();
+			} catch (e:Error) {
+				// swallow close errors, connection may no longer exist
+			}
+			
+			connection.removeEventListener(AsyncErrorEvent.ASYNC_ERROR, handleAsyncEvent);
+			connection.removeEventListener(StatusEvent.STATUS, handleStatusEvent);
+		}
+		
+		/**
 		 * DO NOT USE.  This method is a communication method that is used by the connecting LCM applications.  This method is exposed
 		 * as public only to allow access by the LC.
 		 * 
