@@ -37,23 +37,40 @@ package com.vivisectingmedia.framework.utils.logging
 		static public const HANDSHAKE:int = 200;
 		static public const SYSTEM_MESSAGE:int = 201;
 		
+		// SOURCE TYPES
+		static public const SOURCE_ACTIONSCRIPT:String = "AS";
+		static public const SOURCE_JAVASCRIPT:String = "JS";
+		
 		public var time:Date;
 		public var message:String;
 		public var type:int;
+		public var className:String;
+		public var sourceType:String;
+		public var methodName:String;
+		
 		
 		/**
 		 * Creates a new debug message that is used to pass data from the DebugLogger to the fLogger UI tool.
 		 *  
 		 * @param msg Text message to display in the UI.
 		 * @param msgType The message level.
+		 * @param classReference The class in which the message wwas generated. Optional
+		 * @param methodReference The method in which the message was generated. Optional
+		 * @param source Identify where the message was generated (ActionScript, JavaScript). Optional
 		 * @param passedTime The time the message stores as the creation time.
 		 * 
 		 */
-		public function DebugMessage(msg:String = "", msgType:int = 0, passedTime:Date = null)
+		public function DebugMessage(msg:String = "", msgType:int = 0,classReference:Class = null, methodReference:String = null, source:String = null, passedTime:Date = null)
 		{
 			super();
 			message = msg;
 			type = msgType;
+			className = (classReference) ? Object(classReference).valueOf() : "";
+			
+			className = className.replace(/(\[class|\]|\s)/g, "");
+			methodName = methodReference;
+			sourceType = (source) ? source : DebugMessage.SOURCE_ACTIONSCRIPT;
+			
 			if(time)
 			{
 				// set the time

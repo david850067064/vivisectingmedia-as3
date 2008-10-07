@@ -33,7 +33,7 @@
 			
 			public function handleCreation():void
 			{
-				DebugLogger.info("creation complete.");
+				DebugLogger.info("creation complete.",fLogger_test);
 			}
 			
 			public function testMessage(type:int):void
@@ -41,7 +41,7 @@
 				switch(type)
 				{
 					case DebugMessage.INFO:
-						DebugLogger.info("Test INFO statement.");
+						DebugLogger.info("Test INFO statement.",fLogger_test);
 					break;
 					
 					case DebugMessage.DEBUG:

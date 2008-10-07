@@ -62,13 +62,16 @@ package com.vivisectingmedia.framework.utils.logging
 		 * and are intended to provide basic messages such as construction of an object, calls to a method, etc.
 		 *  
 		 * @param message Text message to be dispatched and displayed.
+		 * @param classReference The class in which the message wwas generated. Optional
+		 * @param methodReference The method in which the message was generated. Optional
+		 * @param source Identify where the message was generated (ActionScript, JavaScript). Optional
 		 * 
 		 */
-		static public function info(message:String):void
+		static public function info(message:String, classReference:Class = null, methodReference:String = null, sourceType:String = null):void
 		{
 			if(!__enabled) return;
 			if(__messageLevel > DebugMessage.INFO) return;
-			instance.sendMessage(message, DebugMessage.INFO);
+			instance.sendMessage(message, DebugMessage.INFO, classReference, methodReference, sourceType);
 		}
 		
 		/**
@@ -77,13 +80,16 @@ package com.vivisectingmedia.framework.utils.logging
 		 * issue has been resolved.
 		 * 
 		 * @param message Text message to be dispatched and displayed.
+		 * @param classReference The class in which the message wwas generated. Optional
+		 * @param methodReference The method iµn which the message was generated. Optional
+		 * @param source Identify where the message was generated (ActionScript, JavaScript). Optional
 		 * 
 		 */
-		static public function debug(message:String):void
+		static public function debug(message:String, classReference:Class = null, methodReference:String = null, sourceType:String = null):void
 		{
 			if(!__enabled) return;
 			if(__messageLevel > DebugMessage.DEBUG) return;
-			instance.sendMessage(message, DebugMessage.DEBUG);
+			instance.sendMessage(message, DebugMessage.DEBUG, classReference, methodReference, sourceType);
 		}
 		
 		/**
@@ -92,13 +98,16 @@ package com.vivisectingmedia.framework.utils.logging
 		 * acceptable issue in some cases.
 		 * 
 		 * @param message Text message to be dispatched and displayed.
+		 * @param classReference The class in which the message wwas generated. Optional
+		 * @param methodReference The method in which the message was generated. Optional
+		 * @param source Identify where the message was generated (ActionScript, JavaScript). Optional		 
 		 * 
 		 */
-		static public function warn(message:String):void
+		static public function warn(message:String, classReference:Class = null, methodReference:String = null, sourceType:String = null):void 
 		{
 			if(!__enabled) return;
 			if(__messageLevel > DebugMessage.WARN) return;
-			instance.sendMessage(message, DebugMessage.WARN);
+			instance.sendMessage(message, DebugMessage.WARN, classReference, methodReference, sourceType);
 		}
 		
 		/**
@@ -107,13 +116,16 @@ package com.vivisectingmedia.framework.utils.logging
 		 * be resolved before release.
 		 * 
 		 * @param message Text message to be dispatched and displayed.
+		 * @param classReference The class in which the message wwas generated. Optional
+		 * @param methodReference The method in which the message was generated. Optional
+		 * @param source Identify where the message was generated (ActionScript, JavaScript). Optional 
 		 * 
 		 */
-		static public function error(message:String):void
+		static public function error(message:String, classReference:Class = null, methodReference:String = null, sourceType:String = null):void
 		{
 			if(!__enabled) return;
 			if(__messageLevel > DebugMessage.ERROR) return;
-			instance.sendMessage(message, DebugMessage.ERROR);
+			instance.sendMessage(message, DebugMessage.ERROR, classReference, methodReference, sourceType);
 		}
 		
 		/**
@@ -121,12 +133,15 @@ package com.vivisectingmedia.framework.utils.logging
 		 * that the application can no longer continue operation.  Fatal errors are the highest level of failure.
 		 * 
 		 * @param message Text message to be dispatched and displayed.
+		 * @param classReference The class in which the message wwas generated. Optional
+		 * @param methodReference The method in which the message was generated. Optional
+		 * @param source Identify where the message was generated (ActionScript, JavaScript). Optional
 		 * 
 		 */
-		static public function fatal(message:String):void
+		static public function fatal(message:String, classReference:Class = null, methodReference:String = null, sourceType:String = null):void
 		{
 			if(!__enabled) return;
-			instance.sendMessage(message, DebugMessage.FATAL);
+			instance.sendMessage(message, DebugMessage.FATAL, classReference, methodReference, sourceType);
 		}
 		
 		/**
@@ -286,11 +301,21 @@ class DebugLog
 			_cacheLog = newCache;
 		}
 	}
-	
-	public function sendMessage(msg:String, type:int):void
+	/**
+	 * Dispatches a FATAL level message to either the log cache or the active fLogger UI tool.  FATAL messges are intended to inform developers
+	 * that the application can no longer continue operation.  Fatal errors are the highest level of failure.
+	 * 
+	 * @param msg Text message to be dispatched and displayed.
+	 * @param type Type of message that is to be displayed
+	 * @param classReference The class in which the message wwas generated. Optional
+	 * @param methodReference The method in which the message was generated. Optional
+	 * @param source Identify where the message was generated (ActionScript, JavaScript). Optional
+	 * 
+	 */
+	public function sendMessage(msg:String, type:int, classReference:Class = null, methodReference:String = null, sourceType:String = null):void
 	{
 		if(!_enabled) return;
-		var dMsg:DebugMessage = new DebugMessage(msg, type);
+		var dMsg:DebugMessage = new DebugMessage(msg, type, classReference, methodReference, sourceType);
 		
 		// if in cache store in cache, else broadcast message
 		if(_inCache)
