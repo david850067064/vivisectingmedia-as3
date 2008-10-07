@@ -34,6 +34,7 @@
 			public var logger:ClassDebugLogger;
 			public function handleCreation():void
 			{
+				DebugLogger.externalInterfaceEnabled = true;
 				logger = DebugLogger.getClassLogger(fLogger_test);
 				logger.info("creation complete.");
 			}
@@ -74,6 +75,14 @@
 			{
 				DebugLogger.debuggingEnabled = false;
 			}
+			
+			public function disableExternalInterface():void {
+				DebugLogger.externalInterfaceEnabled = false;
+			}
+			
+			public function enableExternalInterface():void {
+				DebugLogger.externalInterfaceEnabled = true;
+			}
 		]]>
 	</mx:Script>
 	<mx:HBox>
@@ -92,4 +101,8 @@
 		<mx:Button click="setLevel(DebugMessage.FATAL)" label="set level FATAL" />
 	</mx:HBox>
 	<mx:Button click="disableDebugging()" label="disable debugging" />
+	<mx:HBox>
+		<mx:Button click="enableExternalInterface()" label="Enable External Interface API" />
+		<mx:Button click="disableExternalInterface()" label="Disable External Interface API" />
+	</mx:HBox>
 </mx:Application>
