@@ -25,14 +25,86 @@
 package com.vivisectingmedia.debugloggerpanel.models
 {
 	import flash.events.EventDispatcher;
-	import flash.events.IEventDispatcher;
+	
+	import mx.resources.ResourceManager;
 
 	public class DataModel extends EventDispatcher
 	{
-		public function DataModel()
+		/* STATIC CONSTANTS */
+		static public const MESSAGE_INFO:String = "MESSAGE_INFO";
+		static public const MESSAGE_ERROR:String = "MESSAGE_ERROR";
+		
+		/* STATIC PROPERTIES */
+		static protected var inst:DataModel;
+		
+		/* STATIC METHODS */
+		/**
+		 * The instance method returns the current Singleton instance
+		 * of the DataModel.  When binding to data always access the
+		 * data through the provided DataModel instance from this getter.
+		 * 
+		 * @return The current Singletin DataModel instance.
+		 * 
+		 */
+		static public function get instance():DataModel
+		{
+			if(!inst) inst = new DataModel(SingletonLock);
+			return inst;
+		}
+		
+		/**
+		 * Stores the lock that enables children classes to extend
+		 * the base DataModel Singleton structure.
+		 *  
+		 * @return Singleton lock for construction.
+		 * 
+		 */
+		static protected function get lock():Class
+		{
+			return SingletonLock;
+		}
+		
+		/* PUBLIC PROPERTIES */
+		/**
+		  * Store the consule user information text.
+		  */	
+		[Bindable] public var consuleText:String = "";
+		
+		/* CLASS METHODS */
+		/**
+		 * Constructor - DO NOT CALL.
+		 * @private 
+		 * @param lock
+		 * 
+		 */		
+		public function DataModel(lock:Class)
 		{
 			super(this);
+			
+			// determine if the lock was provided correctly
+			if(!(lock == SingletonLock)) throw new Error(ResourceManager.getInstance().getString('errors', 'invalid_singleton'));
 		}
+		
+		public function addConsuleText(message:String, type:String = DataModel.MESSAGE_INFO):void
+		{
+			switch(type)
+			{
+				case MESSAGE_ERROR:
+					consuleText += "<font color='#990000'>"+message+"</font>"
+				break;
+				
+				default:
+					consuleText += "<font color='#009900'>"+message+"</font>"
+			}
+		}
+		
+	}
+}
+
+class SingletonLock
+{
+	public function SingletonLock()
+	{
 		
 	}
 }

@@ -31,12 +31,22 @@
 	width="840"
 	height="620" 
 	layout="absolute">
+	
+	<!-- IMPORTS -->
 	<mx:Script>
 		<![CDATA[
+			import com.vivisectingmedia.debugloggerpanel.models.DataModel;
 			import com.vivisectingmedia.debugloggerpanel.ui.DateFieldRender;
 			import com.vivisectingmedia.debugloggerpanel.ui.MessageIconRenderer;
 		]]>
 	</mx:Script>
+	
+	<!-- METADATA -->
+	<mx:Metadata>
+		[ResourceBundle("strings")]
+		[ResourceBundle("errors")]
+	</mx:Metadata>
+	
 	
 	<!-- MENU SYSTEM -->
 	<mx:MenuBar id="menu_bar_control" labelField="@label" width="100%">
@@ -72,7 +82,7 @@
 			
 		</mx:TabNavigator>
 		
-		<mx:TextArea id="status_field" width="100%" height="10%" borderStyle="inset"/>
+		<mx:TextArea id="status_field" width="100%" height="10%" borderStyle="inset" htmlText="{DataModel.instance.consuleText}"/>
 	
 	</mx:VDividedBox>
 	
