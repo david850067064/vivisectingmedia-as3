@@ -44,10 +44,10 @@ package com.vivisectingmedia.framework.utils.logging
 		public var time:Date;
 		public var message:String;
 		public var type:int;
+		public var id:String;
 		public var className:String;
 		public var sourceType:String;
 		public var methodName:String;
-		
 		
 		/**
 		 * Creates a new debug message that is used to pass data from the DebugLogger to the fLogger UI tool.
