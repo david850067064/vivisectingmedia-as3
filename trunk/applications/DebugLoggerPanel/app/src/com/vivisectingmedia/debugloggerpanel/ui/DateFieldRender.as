@@ -25,12 +25,17 @@
 package com.vivisectingmedia.debugloggerpanel.ui
 {
 	import mx.controls.Label;
+	import mx.formatters.DateFormatter;
 
 	public class DateFieldRender extends Label
 	{
+		protected var dateFormat:DateFormatter;
+		
 		public function DateFieldRender()
 		{
 			super();
+			dateFormat = new DateFormatter();
+			dateFormat.formatString = "J:NN:SS";
 		}
 		
 		override public function set data(value:Object):void
@@ -44,12 +49,9 @@ package com.vivisectingmedia.debugloggerpanel.ui
 		
 		protected function formatTime(time:Date):String
 		{
-			var hours:String = time.getHours().toString();
-			var minutes:String = time.getMinutes().toString();
-			var seconds:String = time.getSeconds().toString();
 			var milliseconds:String = time.getMilliseconds().toString();
 			
-			return (hours + ":" + minutes + ":" + seconds + "." + milliseconds);
+			return (dateFormat.format(time) + "." + milliseconds);
 		}
 		
 	}
