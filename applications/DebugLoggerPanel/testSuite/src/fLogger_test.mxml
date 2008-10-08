@@ -31,11 +31,15 @@
 			import com.vivisectingmedia.framework.utils.logging.ClassDebugLogger;
 			import com.vivisectingmedia.framework.utils.logging.DebugLogger;
 			import com.vivisectingmedia.framework.utils.logging.DebugMessage;
+			
 			public var logger:ClassDebugLogger;
+			public var logger2:ClassDebugLogger;
+			
 			public function handleCreation():void
 			{
 				DebugLogger.externalInterfaceEnabled = true;
 				logger = DebugLogger.getClassLogger(fLogger_test);
+				logger2 = DebugLogger.getClassLogger(com.vivisectingmedia.framework.utils.logging.ClassDebugLogger);
 				logger.info("creation complete.");
 			}
 			
@@ -61,6 +65,33 @@
 					
 					case DebugMessage.FATAL:
 						logger.fatal("Test FATAL statement.");
+					break;
+				}
+				
+			}
+			
+			public function testClassLogger(type:int):void
+			{
+				switch(type)
+				{
+					case DebugMessage.INFO:
+						logger2.info("Test INFO statement.", "testClassLogger");
+					break;
+					
+					case DebugMessage.DEBUG:
+						logger2.debug("Test DEBUG statement.");
+					break;
+					
+					case DebugMessage.WARN:
+						logger2.warn("Test WARN statement.");
+					break;
+					
+					case DebugMessage.ERROR:
+						logger2.error("Test ERROR statement.");
+					break;
+					
+					case DebugMessage.FATAL:
+						logger2.fatal("Test FATAL statement.");
 					break;
 				}
 				
@@ -104,5 +135,8 @@
 	<mx:HBox>
 		<mx:Button click="enableExternalInterface()" label="Enable External Interface API" />
 		<mx:Button click="disableExternalInterface()" label="Disable External Interface API" />
+	</mx:HBox>
+	<mx:HBox>
+		<mx:Button click="testClassLogger(DebugMessage.INFO)" label="test class INFO" />
 	</mx:HBox>
 </mx:Application>
