@@ -84,7 +84,7 @@
 						<mx:DataGridColumn dataField="message" headerText="@Resource(key='ui_message_header', bundle='strings')" />
 						<mx:DataGridColumn dataField="className" width="120" headerText="@Resource(key='ui_message_class_header', bundle='strings')" />
 						<mx:DataGridColumn dataField="methodName" width="120" headerText="@Resource(key='ui_message_method_header', bundle='strings')" />
-						<mx:DataGridColumn dataField="sourceType" width="62" headerText="@Resource(key='ui_message_source_header', bundle='strings')" />
+						<mx:DataGridColumn dataField="sourceType" width="62" headerText="@Resource(key='ui_message_source_header', bundle='strings')"  />
 					</mx:columns>
 				</mx:DataGrid>
 			</mx:VBox>

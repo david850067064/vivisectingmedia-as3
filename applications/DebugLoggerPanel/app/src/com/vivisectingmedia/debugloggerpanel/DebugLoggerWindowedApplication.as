@@ -32,6 +32,9 @@ package com.vivisectingmedia.debugloggerpanel
 	import com.vivisectingmedia.framework.utils.logging.DebugLogger;
 	import com.vivisectingmedia.framework.utils.logging.DebugMessage;
 	
+	import flash.desktop.InteractiveIcon;
+	import flash.display.Bitmap;
+	
 	import mx.collections.ArrayCollection;
 	import mx.controls.CheckBox;
 	import mx.controls.ComboBox;
