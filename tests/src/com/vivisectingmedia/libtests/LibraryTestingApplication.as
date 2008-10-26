@@ -28,8 +28,10 @@ package com.vivisectingmedia.libtests
 	import com.vivisectingmedia.libtests.tests.AdjustableDateTests;
 	import com.vivisectingmedia.libtests.tests.EventBrokerTests;
 	import com.vivisectingmedia.libtests.tests.HashTableTests;
+	import com.vivisectingmedia.libtests.tests.InstanceFactoryTests;
 	import com.vivisectingmedia.libtests.tests.QueueTests;
 	import com.vivisectingmedia.libtests.tests.SelectionControllerTests;
+	import com.vivisectingmedia.libtests.tests.SingletonFactoryTest;
 	
 	import flexunit.flexui.TestRunnerBase;
 	import flexunit.framework.TestSuite;
@@ -67,8 +69,10 @@ package com.vivisectingmedia.libtests
 			suite.addTest( TestUtils.generateFullSuite(SelectionControllerTests) );
 			suite.addTest( TestUtils.generateFullSuite(HashTableTests) );
 			suite.addTest( TestUtils.generateFullSuite(QueueTests) );
-			//*/
+			suite.addTest( TestUtils.generateFullSuite(InstanceFactoryTests) );
 			suite.addTest( TestUtils.generateFullSuite(AdjustableDateTests) );
+			//*/
+			suite.addTest( TestUtils.generateFullSuite(SingletonFactoryTest) );
 			
 			return suite;
 		}
