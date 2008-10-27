@@ -28,9 +28,15 @@ package com.vivisectingmedia.framework.controllers.interfaces
 	
 	public interface ITask extends IEventDispatcher
 	{
-		function get priority():String
+		function get priority():int
 		
 		function get type():String
+		
+		function get ready():Boolean
+		
+		function get phase():String;
+		
+		function get taskOverrides():Array
 		
 		function start():void
 		
