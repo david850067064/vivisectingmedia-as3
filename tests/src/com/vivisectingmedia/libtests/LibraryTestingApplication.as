@@ -32,6 +32,7 @@ package com.vivisectingmedia.libtests
 	import com.vivisectingmedia.libtests.tests.QueueTests;
 	import com.vivisectingmedia.libtests.tests.SelectionControllerTests;
 	import com.vivisectingmedia.libtests.tests.SingletonFactoryTest;
+	import com.vivisectingmedia.libtests.tests.TaskControllerTests;
 	
 	import flexunit.flexui.TestRunnerBase;
 	import flexunit.framework.TestSuite;
@@ -43,6 +44,16 @@ package com.vivisectingmedia.libtests
 	{
 		[Bindable]
 		public var test_runner:TestRunnerBase;
+		
+		// CLASS LINKERS -- ENABLES EASE OF COMMENTING OUT/IN TESTS //
+		private var eventbroker:EventBrokerTests;
+		private var selectioncontroller:SelectionControllerTests;
+		private var hashtable:HashTableTests;
+		private var queue:QueueTests;
+		private var instancefactory:InstanceFactoryTests;
+		private var adjustabledata:AdjustableDateTests;
+		private var singletonfactory:SingletonFactoryTest;
+		private var taskcontroller:TaskControllerTests;
 		
 		public function LibraryTestingApplication()
 		{
@@ -71,8 +82,10 @@ package com.vivisectingmedia.libtests
 			suite.addTest( TestUtils.generateFullSuite(QueueTests) );
 			suite.addTest( TestUtils.generateFullSuite(InstanceFactoryTests) );
 			suite.addTest( TestUtils.generateFullSuite(AdjustableDateTests) );
-			//*/
 			suite.addTest( TestUtils.generateFullSuite(SingletonFactoryTest) );
+			suite.addTest( TestUtils.generateFullSuite(TaskControllerTests) );
+			//*/
+			
 			
 			return suite;
 		}
