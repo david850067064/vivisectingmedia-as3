@@ -44,5 +44,9 @@ package com.vivisectingmedia.framework.controllers.interfaces
 		
 		function cancel():void
 		
+		function inQueue():void
+		
+		function inWaitingForReady():void
+		
 	}
 }
