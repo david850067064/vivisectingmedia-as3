@@ -30,10 +30,12 @@ package com.vivisectingmedia.framework.controllers.events
 	{
 		static public const TASK_READY:String = "TASK_READY";
 		static public const TASK_COMPLETE:String = "TASK_COMPLETE";
+		static public const TASK_WAITING_FOR_READY:String = "TASK_WAITING_FOR_READY";
 		static public const TASK_QUEUED:String = "TASK_QUEUED";
 		static public const TASK_START:String = "TASK_START";
 		static public const TASK_PAUSE:String = "TASK_PAUSE";
 		static public const TASK_CANCEL:String = "TASK_CANCEL";
+		static public const TASK_ERROR:String = "TASK_ERROR";
 		
 		public function TaskEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
 		{

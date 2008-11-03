@@ -40,9 +40,9 @@ package com.vivisectingmedia.framework.controllers
 		
 		private var __activeTaskLimit:uint = 1;
 		
-		public function TaskController(target:IEventDispatcher=null)
+		public function TaskController()
 		{
-			super(target);
+			super(this);
 			
 			taskQueue = new Array();
 			
@@ -108,7 +108,17 @@ package com.vivisectingmedia.framework.controllers
 		
 		protected function addToQueue(task:ITask):void
 		{
+			// verify we have tasks
+			task.inQueue();
 			var len:int = taskQueue.length;
+			if(len < 1)
+			{
+				// we have no tasks, add and exit
+				taskQueue.push(task);
+				return;
+			}
+			
+			// determine the placement
 			for(var i:uint = 0; i < len; i++)
 			{
 				var item:ITask = ITask(taskQueue[i]);
@@ -124,8 +134,11 @@ package com.vivisectingmedia.framework.controllers
 		
 		protected function next():void
 		{
+			// make sure we have tasks, if not exit
+			if(taskQueue.length < 1) return;
+			
 			// see if we can handle a new task
-			if(activeTasks.length <= __activeTaskLimit)
+			if(activeTasks.length < __activeTaskLimit)
 			{
 				// we need to take action, and get the next task
 				var nextTask:ITask = ITask(taskQueue.shift());
@@ -142,6 +155,7 @@ package com.vivisectingmedia.framework.controllers
 					// the task is not ready, add to the not ready queue
 					nextTask.addEventListener(TaskEvent.TASK_READY, handleTaskEvent);
 					notReadyQueue.addItem(nextTask, true);
+					nextTask.inWaitingForReady();
 					next();
 				}
 			}
