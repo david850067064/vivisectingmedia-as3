@@ -29,6 +29,7 @@ package com.vivisectingmedia.libtests
 	import com.vivisectingmedia.libtests.tests.EventBrokerTests;
 	import com.vivisectingmedia.libtests.tests.HashTableTests;
 	import com.vivisectingmedia.libtests.tests.InstanceFactoryTests;
+	import com.vivisectingmedia.libtests.tests.PriorityQueueTests;
 	import com.vivisectingmedia.libtests.tests.QueueTests;
 	import com.vivisectingmedia.libtests.tests.SelectionControllerTests;
 	import com.vivisectingmedia.libtests.tests.SingletonFactoryTest;
@@ -54,6 +55,7 @@ package com.vivisectingmedia.libtests
 		private var adjustabledata:AdjustableDateTests;
 		private var singletonfactory:SingletonFactoryTest;
 		private var taskcontroller:TaskControllerTests;
+		private var priorityqueue:PriorityQueueTests;
 		
 		public function LibraryTestingApplication()
 		{
@@ -83,9 +85,9 @@ package com.vivisectingmedia.libtests
 			suite.addTest( TestUtils.generateFullSuite(InstanceFactoryTests) );
 			suite.addTest( TestUtils.generateFullSuite(AdjustableDateTests) );
 			suite.addTest( TestUtils.generateFullSuite(SingletonFactoryTest) );
+			suite.addTest( TestUtils.generateFullSuite(PriorityQueueTests) );
 			suite.addTest( TestUtils.generateFullSuite(TaskControllerTests) );
 			//*/
-			
 			
 			return suite;
 		}
