@@ -161,6 +161,20 @@ package com.vivisectingmedia.framework.datastructures.utils
 		}
 		
 		/**
+		 * Peek returns the first item in the queue without removing
+		 * the item from the queue.  This enables you to peek at the
+		 * item without adjust the order in the queue.
+		 *  
+		 * @return First item in the queue, null if no items in the queue.
+		 * 
+		 */
+		public function peek():*
+		{
+			if(!hasItems) return null;
+			return PriorityWrapper(_table[0]).item;
+		}
+		
+		/**
 		 * Used to determine if items are currently stored inside the
 		 * PriorityQueue.
 		 *  
@@ -170,6 +184,22 @@ package com.vivisectingmedia.framework.datastructures.utils
 		public function get hasItems():Boolean
 		{
 			return (_table.length > 0) ? true : false;
+		}
+		
+		/**
+		 * Returns a cloned copy of the items table in the queue.
+		 *  
+		 * @return An array of the items in the current order they are within the queue.
+		 * 
+		 */
+		public function get items():Array
+		{
+			var output:Array = new Array();
+			for each(var item:PriorityWrapper in _table)
+			{
+				output.push(item.item);
+			}
+			return output;
 		}
 		
 		/**
