@@ -28,7 +28,6 @@ package com.vivisectingmedia.libtests.tests
 	import com.vivisectingmedia.libtests.elements.selectiongroup.SelectionObject;
 	
 	import flexunit.framework.TestCase;
-	import flexunit.framework.TestSuite;
 
 	public class SelectionControllerTests extends TestCase
 	{
@@ -564,6 +563,54 @@ package com.vivisectingmedia.libtests.tests
 			assertTrue("Selection1 was not selected.", selection1.selected);
 			assertTrue("Selection2 was not selected.", selection2.selected);
 			assertTrue("Selection3 was not selected.", selection3.selected);
+		}
+		
+		/**
+		 * Verifies that getAllItemsInGroup() returns the complete
+		 * list of items within the group id.  
+		 * 
+		 */
+		public function testGetAllItems():void
+		{
+			// create six selection objects
+			var selection1:SelectionObject = new SelectionObject();
+			var selection2:SelectionObject = new SelectionObject();
+			var selection3:SelectionObject = new SelectionObject();
+			
+			// get a new id and then add the objects to the controller
+			var groupOne:int = SelectionController.generateNewId();
+			SelectionController.addItem(selection1, groupOne);
+			SelectionController.addItem(selection2, groupOne);
+			SelectionController.addItem(selection3, groupOne);
+			
+			// get the list back
+			var list:Array = SelectionController.getAllItemsInGroup(groupOne);
+			
+			assertTrue("The length of the returned list is incorrect.", list.length == 3);
+			assertTrue("The 0 position of the list contained the incorrect item.", selection1 === list[0]);
+			assertTrue("The 1 position of the list contained the incorrect item.", selection2 === list[1]);
+			assertTrue("The 2 position of the list contained the incorrect item.", selection3 === list[2]);
+		}
+		
+		/**
+		 * Verify that getAllItemsInGroup() returns an empty array when
+		 * provided an invalid group id.
+		 * 
+		 */
+		public function testGetAllItemsInvalidID():void
+		{
+			// create six selection objects
+			var selection1:SelectionObject = new SelectionObject();
+			
+			// get a new id and then add the objects to the controller
+			var groupOne:int = SelectionController.generateNewId();
+			SelectionController.addItem(selection1, groupOne);
+			
+			// get the list back
+			var list:Array = SelectionController.getAllItemsInGroup(123456);
+			
+			// the list should be empty
+			assertTrue("The length of the returned list is incorrect.", list.length == 0);
 		}
 	}
 }
