@@ -243,5 +243,55 @@ package com.vivisectingmedia.libtests.tests
 			queue.next();
 			assertFalse("Queue should not have any items left.", queue.hasItems);
 		}
+		
+		/**
+		 * Verify that the priority queue has the ability to view 
+		 * the next item in the queue without removing the item 
+		 * from the queue itself.
+		 * 
+		 */
+		public function testPeek():void
+		{
+			// create the queue and 1 test items
+			var queue:PriorityQueue = new PriorityQueue();
+			var item1:Object = new Object();
+			
+			// add the items in order
+			queue.addItem(item1);
+			
+			assertTrue("Peek did not show the correct item.", item1 === queue.peek());
+			assertTrue("Peek should not have removed the item.", item1 === queue.next());
+		}
+		
+		/**
+		 * Verify that a cloned array of the items table is returned. 
+		 * 
+		 */
+		public function testItems():void
+		{
+			// create the queue and 3 test items
+			var queue:PriorityQueue = new PriorityQueue();
+			var item1:Object = new Object();
+			var item2:Object = new Object();
+			var item3:Object = new Object();
+			
+			// add the items in order
+			queue.addItem(item1);
+			queue.addItem(item2); 
+			queue.addItem(item3);
+			queue.addItem(item1);
+			
+			var list:Array = queue.items;
+			
+			// verify the order is correct
+			assertTrue("Queue did not return expected item1 in position 0.", item1 === list[0]);
+			assertTrue("Queue did not return expected item1 in position 1.", item2 === list[1]);
+			assertTrue("Queue did not return expected item1 in position 2.", item3 === list[2]);
+			assertTrue("Queue did not return expected item1 in position 3.", item1 === list[3]);
+			
+			// change the array, make sure its a clone
+			list[0] = item2;			
+			assertTrue("Queue did not return expected item1.", item1 === queue.next());
+		}
 	}
 }
