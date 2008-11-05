@@ -127,6 +127,22 @@ package com.vivisectingmedia.framework.controllers
 		}
 		
 		/**
+		 * Returns a list of items that are members of the provided group.
+		 * This is a cloned array of the internal list and modifying the order
+		 * or content of the Array will not affect group membership or order.
+		 * If the provided group id is not used or found then an empty Array
+		 * is returned.
+		 *  
+		 * @param group The group id to lookup.
+		 * @return The list of ISelectable items bound to the provided group.
+		 * 
+		 */
+		static public function getAllItemsInGroup(group:int):Array
+		{
+			return instance.inst_getAllItemsInGroup(group);
+		}
+		
+		/**
 		 * Removes the item from the manager and the boung group.  If the item is the 
 		 * last of the group, the group is removed from the SelectionController and is
 		 * no longer considered a valid group id.  The group id can be re-used when calling
@@ -281,6 +297,24 @@ package com.vivisectingmedia.framework.controllers
 			{
 				ISelectable(itemList[i]).selected = true;
 			}
+		}
+		
+		/**
+		 * Method called by the public facade method getAllItemsInGroup().
+		 * @param group
+		 * @return 
+		 * 
+		 */
+		private function inst_getAllItemsInGroup(group:int):Array
+		{
+			var output:Array = new Array();
+			if(_groupTable.containsKey(group))
+			{
+				// we have the key, get the list
+				var itemList:Array = _groupTable.getItem(group) as Array;
+				output = itemList.slice();
+			}
+			return output;
 		}
 		
 		/**
