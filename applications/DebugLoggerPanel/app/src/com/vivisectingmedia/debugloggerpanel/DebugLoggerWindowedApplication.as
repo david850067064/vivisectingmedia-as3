@@ -124,8 +124,15 @@ package com.vivisectingmedia.debugloggerpanel
 			var level:Number = filter_list.selectedItem.value;
 			if(msg.type >= level)
 			{
-				if(filteredMessageList.length >= maxMessages) filteredMessageList.removeItemAt(0);
-				filteredMessageList.addItem(msg);
+				if(cache_message_toggle && cache_message_toggle.selected)
+				{
+					if(filteredMessageList.length >= maxMessages) filteredMessageList.removeItemAt(0);
+					filteredMessageList.addItem(msg);	
+				} else if(msg.type != DebugMessage.SYSTEM_MESSAGE) {
+					if(filteredMessageList.length >= maxMessages) filteredMessageList.removeItemAt(0);
+					filteredMessageList.addItem(msg);
+				}
+				
 			}
 		}
 		
