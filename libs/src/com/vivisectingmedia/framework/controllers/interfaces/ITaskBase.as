@@ -24,23 +24,12 @@
  * ***** END MIT LICENSE BLOCK ***** */
 package com.vivisectingmedia.framework.controllers.interfaces
 {
-	import flash.events.IEventDispatcher;
-	
-	public interface ITask extends IEventDispatcher, ITaskBase
+	public interface ITaskBase
 	{
-		function get ready():Boolean
+		function get priority():uint
 		
-		function get phase():String;
+		function get type():String
 		
-		function start():void
-		
-		function pause():void
-		
-		function cancel():void
-		
-		function inQueue():void
-		
-		function inWaitingForReady():void
-		
+		function get taskOverrides():Array
 	}
 }

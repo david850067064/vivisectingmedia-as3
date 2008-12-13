@@ -26,15 +26,16 @@ package com.vivisectingmedia.framework.controllers
 {
 	import com.vivisectingmedia.framework.controllers.events.TaskEvent;
 	import com.vivisectingmedia.framework.controllers.interfaces.ITask;
+	import com.vivisectingmedia.framework.controllers.interfaces.ITaskBase;
+	import com.vivisectingmedia.framework.controllers.interfaces.ITaskGroup;
 	import com.vivisectingmedia.framework.datastructures.utils.HashTable;
+	import com.vivisectingmedia.framework.datastructures.utils.PriorityQueue;
 	
 	import flash.events.EventDispatcher;
-	import flash.events.IEventDispatcher;
 
 	public class TaskController extends EventDispatcher
 	{
-		protected var taskQueue:Array;
-		
+		protected var taskQueue:PriorityQueue;
 		protected var activeTasks:HashTable;
 		protected var notReadyQueue:HashTable;
 		
@@ -44,8 +45,7 @@ package com.vivisectingmedia.framework.controllers
 		{
 			super(this);
 			
-			taskQueue = new Array();
-			
+			taskQueue = new PriorityQueue();
 			activeTasks = new HashTable();
 			notReadyQueue = new HashTable();
 		}
@@ -66,10 +66,16 @@ package com.vivisectingmedia.framework.controllers
 			applyOverrides(task.taskOverrides);
 			
 			// determine priority and placement
-			addToQueue(task);
+			task.inQueue();
+			taskQueue.addItem(task, task.priority);
 			
 			// call next, to check queue state
 			next();
+		}
+		
+		public function addTaskGroup(group:ITaskGroup):void
+		{
+			
 		}
 		
 		/**
@@ -85,77 +91,64 @@ package com.vivisectingmedia.framework.controllers
 			if(overrides.length < 1) return; // no overrides
 			
 			// loop over and find all the matched type
-			var newList:Array = new Array();
-			var len:int = overrides.length;			
-			for each(var task:ITask in taskQueue)
+			var newList:PriorityQueue = new PriorityQueue();
+			var len:int = overrides.length;		
+			var itemList:Array = taskQueue.items;
+				
+			for each(var taskBase:ITaskBase in itemList)
 			{
 				var match:Boolean = false;
 				for(var i:uint = 0; i < len; i++) 
 				{ 
-					if(task.type == overrides[i]) 
+					if(taskBase.type == overrides[i]) 
 					{
 						// found a match, cancel it
 						match == true; 
-						task.cancel();
+						if(taskBase is ITask) ITask(taskBase).cancel();
 					}
 				}
-				if(!match) newList.push(task);
+				if(!match) newList.addItem(taskBase, taskBase.priority);
 			}
 			
 			// update to the stripped list
 			taskQueue = newList;
 		}
 		
-		protected function addToQueue(task:ITask):void
-		{
-			// verify we have tasks
-			task.inQueue();
-			var len:int = taskQueue.length;
-			if(len < 1)
-			{
-				// we have no tasks, add and exit
-				taskQueue.push(task);
-				return;
-			}
-			
-			// determine the placement
-			for(var i:uint = 0; i < len; i++)
-			{
-				var item:ITask = ITask(taskQueue[i]);
-				if(task.priority > item.priority)
-				{
-					// found placement... add then break
-					var placement:int = ((i - 1) < 0) ? 0 : (i - 1);
-					taskQueue = taskQueue.splice(placement, 0, task);
-					return;
-				}
-			}
-		}
-		
 		protected function next():void
 		{
 			// make sure we have tasks, if not exit
-			if(taskQueue.length < 1) return;
+			if(!taskQueue.hasItems) return;
 			
 			// see if we can handle a new task
 			if(activeTasks.length < __activeTaskLimit)
 			{
-				// we need to take action, and get the next task
-				var nextTask:ITask = ITask(taskQueue.shift());
+				// we need to take action, first check ready queue then go to task queue
+				var nextTask:ITaskBase = ITaskBase(taskQueue.peek());
+				
+				// determine if it is a task or task base
+				var task:ITask;
+				if(nextTask is ITaskGroup)
+				{
+					task = ITaskGroup(nextTask).next();
+					if(!ITaskGroup(nextTask).hasTask) taskQueue.next();
+				} else {
+					task = ITask(taskQueue.next());
+				}
+				
 				
 				// determine if the tasks are ready
-				if(nextTask.ready)
+				if(task.ready)
 				{
 					// start the task and add it to the active task list
-					nextTask.addEventListener(TaskEvent.TASK_COMPLETE, handleTaskEvent);
-					nextTask.addEventListener(TaskEvent.TASK_CANCEL, handleTaskEvent);
-					nextTask.start();
-					activeTasks.addItem(nextTask, true);
+					task.addEventListener(TaskEvent.TASK_COMPLETE, handleTaskEvent);
+					task.addEventListener(TaskEvent.TASK_CANCEL, handleTaskEvent);
+					task.start();
+					activeTasks.addItem(task, true);
 				} else {
 					// the task is not ready, add to the not ready queue
-					nextTask.addEventListener(TaskEvent.TASK_READY, handleTaskEvent);
-					notReadyQueue.addItem(nextTask, true);
-					nextTask.inWaitingForReady();
+					task.addEventListener(TaskEvent.TASK_READY, handleTaskEvent);
+					notReadyQueue.addItem(task, true);
+					task.inWaitingForReady();
 					next();
 				}
 			}
@@ -178,8 +171,8 @@ package com.vivisectingmedia.framework.controllers
 				case TaskEvent.TASK_READY:
 					// remove from the not ready task, add to the front of the line and call next
 					notReadyQueue.remove(task);
-					taskQueue.unshift(task);
 					task.removeEventListener(TaskEvent.TASK_READY, handleTaskEvent);
+					taskQueue.addItem(task, 1); // set to one to override all but zero
 					next();
 				break;
 			}

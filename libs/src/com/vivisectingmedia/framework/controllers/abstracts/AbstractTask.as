@@ -66,7 +66,7 @@ package com.vivisectingmedia.framework.controllers.abstracts
 			currentPhase = TASK_CREATED;
 		}
 		
-		public function get priority():int
+		public function get priority():uint
 		{
 			// default is set to five, lowest default prority
 			return 5;
