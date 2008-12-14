@@ -29,7 +29,6 @@ package com.vivisectingmedia.libtests.tests
 	import com.vivisectingmedia.framework.controllers.interfaces.ISelectableGroup;
 	import com.vivisectingmedia.libtests.elements.selectiongroup.SelectionGroupObject;
 	import com.vivisectingmedia.libtests.elements.selectiongroup.SelectionObject;
-	import com.vivisectingmedia.libtests.elements.selectiongroup.TestSelectionGroupViaMXML;
 	
 	import flash.events.Event;
 	
