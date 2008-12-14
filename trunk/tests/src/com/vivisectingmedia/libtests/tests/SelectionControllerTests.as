@@ -42,7 +42,7 @@ package com.vivisectingmedia.libtests.tests
 			super(methodName);
 		}
 		
-		override public function tearDown():void
+	override public function tearDown():void
 		{
 			// reset the instance of the SelectionController
 			SelectionController.clearAllGroups();
