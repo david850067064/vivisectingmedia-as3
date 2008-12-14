@@ -54,22 +54,22 @@ package com.vivisectingmedia.framework.controllers.abstracts
 		
 		/* PRIVATE PROPERTIES */
 		private var __type:String;
-
+		private var __priority:int;
 		
-		public function AbstractTask(type:String)
+		public function AbstractTask(type:String, priority:int = 5)
 		{
 			super(this);
 			
 			// set properties
 			__type = type;
+			__priority = priority;
 			currentOverrides = new Array();
 			currentPhase = TASK_CREATED;
 		}
 		
 		public function get priority():uint
 		{
-			// default is set to five, lowest default prority
-			return 5;
+			return __priority;
 		}
 		
 		public function get type():String

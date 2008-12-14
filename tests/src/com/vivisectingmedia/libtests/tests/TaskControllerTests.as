@@ -25,8 +25,13 @@
  package com.vivisectingmedia.libtests.tests
 {
 	import com.vivisectingmedia.framework.controllers.TaskController;
+	import com.vivisectingmedia.framework.controllers.abstracts.AbstractTask;
 	import com.vivisectingmedia.framework.controllers.events.TaskEvent;
+	import com.vivisectingmedia.framework.datastructures.tasks.TaskGroup;
 	import com.vivisectingmedia.libtests.elements.tasks.TestTask;
+	import com.vivisectingmedia.libtests.elements.tasks.TestTaskPriority0;
+	import com.vivisectingmedia.libtests.elements.tasks.TestTaskPriority1;
+	import com.vivisectingmedia.libtests.elements.tasks.TestTaskPriority2;
 	
 	import flexunit.framework.TestCase;
 
@@ -105,29 +110,102 @@
 			task.triggerReady();
 		}
 		
+		/**
+		 * Verify that adding a task group will execute on item
+		 */
+		 public function testAddTaskGroupWithOneTask():void {
+		 	var taskGroup:TaskGroup = new TaskGroup("TASKGROUP");
+		 	
+		 	var task1:TestTaskPriority1 = new TestTaskPriority1();
+		 	
+			task1.addEventListener(TaskEvent.TASK_START, addAsync(handleTaskStart,500),false, 0,true);
+			taskGroup.addTask(task1);
+			controller.addTaskGroup(taskGroup);
+		 }
+		 
+		 /**
+		 * Verify that adding a task group will execute two items
+		 */
+		 public function testAddTaskGroupWithTwoTask():void {
+		 	var taskGroup:TaskGroup = new TaskGroup("TASKGROUP");
+		 	
+		 	var task0:TestTaskPriority0 = new TestTaskPriority0();
+			var task1:TestTaskPriority1 = new TestTaskPriority1();
+			// Listen to second task, verify it started
+			task1.addEventListener(TaskEvent.TASK_START, addAsync(handleTaskStart,500),false, 0,true);
+			
+			taskGroup.addTask(task0);
+			taskGroup.addTask(task1);
+
+			controller.addTaskGroup(taskGroup);
+			task0.triggerComplete();
+		 }
+		 
+		 public function testTaskGroupRemoveTask():void {
+		 	var taskGroup:TaskGroup = new TaskGroup("TASKGROUP");
+		 	
+		 	var task0:TestTaskPriority0 = new TestTaskPriority0();
+			// Listen to task, verify it was canceled after removed from group
+			task0.addEventListener(TaskEvent.TASK_CANCEL, addAsync(handleTaskCanceled,500),false, 0,true);
+			// Add task to group
+			taskGroup.addTask(task0);
+			// Add group to controller
+			controller.addTaskGroup(taskGroup);
+			// Remove task from group
+			taskGroup.removeTask(task0);
+			// Verify task is removed from group
+			assertFalse("Task should be removed from group", taskGroup.getTaskIndex(task0) >= 0);
+		 }
+		 
+		 /**
+		 * Test verifies that removing an item from a group will still fire next item in queue
+		 */ 
+		 public function testTaskGroupRemoveTasks():void {
+		 	var taskGroup:TaskGroup = new TaskGroup("TASKGROUP");
+		 	
+		 	var task0:TestTaskPriority0 = new TestTaskPriority0();
+		 	var task1:TestTaskPriority1 = new TestTaskPriority1();
+		 	var task2:TestTaskPriority2 = new TestTaskPriority2();
+		 			 	
+			// Listen to task, verify it was canceled after removed from group
+			task2.addEventListener(TaskEvent.TASK_START, addAsync(handleTaskStart,500),false, 0,true);
+			// Add task to group
+			taskGroup.addTask(task0);
+			taskGroup.addTask(task1);
+			taskGroup.addTask(task2);			
+			// Add group to controller
+			controller.addTaskGroup(taskGroup);
+			// Remove Second item
+			taskGroup.removeTask(task1);
+			// Mark first task as complete, third task should start
+			task0.triggerComplete();
+		 }
 		// test specific handlers
-				
-		
 		// generic handlers for task event
 		protected function handleTaskQueued(event:TaskEvent):void
 		{
 			// verify the current phase is set
-			var currentTask:TestTask = TestTask(event.currentTarget);
+			var currentTask:AbstractTask = AbstractTask(event.currentTarget);
 			assertTrue("The task's phase was not set to queued.", currentTask.phase == TaskEvent.TASK_QUEUED);
 		}
 		
 		protected function handleTaskStart(event:TaskEvent):void
 		{
 			// verify the current phase is set
-			var currentTask:TestTask = TestTask(event.currentTarget);
+			var currentTask:AbstractTask = AbstractTask(event.currentTarget);
 			assertTrue("The task's phase was not set to start.", currentTask.phase == TaskEvent.TASK_START);
 		}
 		
 		protected function handleTaskInWaiting(event:TaskEvent):void
 		{
 			// verify the current phase is set
-			var currentTask:TestTask = TestTask(event.currentTarget);
+			var currentTask:AbstractTask = AbstractTask(event.currentTarget);
 			assertTrue("The task's phase was not set to in waiting.", currentTask.phase == TaskEvent.TASK_WAITING_FOR_READY);
+		}
+		protected function handleTaskCanceled(event:TaskEvent):void {
+			// verify the current phase is set
+			var currentTask:AbstractTask = AbstractTask(event.currentTarget);
+			assertTrue("The task's phase was not set to cancel.", currentTask.phase == TaskEvent.TASK_CANCEL);
 		}
 	}
 }
