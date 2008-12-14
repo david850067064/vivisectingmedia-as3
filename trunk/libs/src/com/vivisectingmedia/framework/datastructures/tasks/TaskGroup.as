@@ -57,6 +57,7 @@ package com.vivisectingmedia.framework.datastructures.tasks
 		private var __type:String;
 		private var __groupOverrides:Array;
 		private var __priority:int;
+		private var __uid:Object;
 		
 		/**
 		 * Constructor.  Sets the groups type and priority.
@@ -65,13 +66,15 @@ package com.vivisectingmedia.framework.datastructures.tasks
 		 * @param groupPriority
 		 * 
 		 */
-		public function TaskGroup(type:String, groupPriority:int = 5)
+		public function TaskGroup(type:String, priority:int = 5, uid:Object = null)
 		{
 			super(this);
 			
 			taskQueue = new PriorityQueue();
 			__groupOverrides = new Array();
-			__priority = groupPriority;
+			__type = type;
+			__priority = priority;
+			__uid = uid
 		}
 		
 		/**
@@ -98,6 +101,14 @@ package com.vivisectingmedia.framework.datastructures.tasks
 		public function get priority():uint
 		{
 			return __priority;
+		}
+		/**
+		 * Unique id of the group instance.
+		 * 
+		 * @return id of the group
+		 */
+		public function get uid():Object {
+			return __uid;
 		}
 		
 		/**
@@ -208,7 +219,17 @@ package com.vivisectingmedia.framework.datastructures.tasks
 			return taskQueue.next();
 		}
 		
-		
+		public function getTaskIndex(task:ITask):int {
+			// Loop through all tasks, if the same task is found
+			// return index
+			for(var i:uint=0;i<=tasks.length;i++) {
+				if(tasks[i] == task) {
+					return i; 
+				}
+			}
+			// Return -1 if the task is NOT found
+			return -1;
+		}
 		
 	}
 }

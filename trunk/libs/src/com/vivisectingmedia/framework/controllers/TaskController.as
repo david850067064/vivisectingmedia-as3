@@ -73,9 +73,13 @@ package com.vivisectingmedia.framework.controllers
 			next();
 		}
 		
-		public function addTaskGroup(group:ITaskGroup):void
-		{
-			
+		public function addTaskGroup(group:ITaskGroup):void {
+			// Apply overrides
+			applyOverrides(group.taskOverrides);
+			// Add group to queue
+			taskQueue.addItem(group, group.priority);
+			// Call next to execute
+			next();
 		}
 		
 		/**

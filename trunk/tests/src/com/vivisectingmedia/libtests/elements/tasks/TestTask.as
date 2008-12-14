@@ -34,9 +34,9 @@ package com.vivisectingmedia.libtests.elements.tasks
 		
 		protected var isReady:Boolean = true;
 		
-		public function TestTask(type:String = BASIC_TASK)
+		public function TestTask(type:String = BASIC_TASK, priority:int=5)
 		{
-			super(type);
+			super(type,priority);
 			
 			switch(type)
 			{
