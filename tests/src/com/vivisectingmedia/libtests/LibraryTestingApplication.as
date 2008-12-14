@@ -32,6 +32,7 @@ package com.vivisectingmedia.libtests
 	import com.vivisectingmedia.libtests.tests.PriorityQueueTests;
 	import com.vivisectingmedia.libtests.tests.QueueTests;
 	import com.vivisectingmedia.libtests.tests.SelectionControllerTests;
+	import com.vivisectingmedia.libtests.tests.SelectionGroupTests;
 	import com.vivisectingmedia.libtests.tests.SingletonFactoryTest;
 	import com.vivisectingmedia.libtests.tests.TaskControllerTests;
 	import com.vivisectingmedia.libtests.tests.TaskGroupTests;
@@ -82,6 +83,7 @@ package com.vivisectingmedia.libtests
 			//*
 			suite.addTest( TestUtils.generateFullSuite(EventBrokerTests) );
 			suite.addTest( TestUtils.generateFullSuite(SelectionControllerTests) );
+			suite.addTest( TestUtils.generateFullSuite(SelectionGroupTests) );
 			suite.addTest( TestUtils.generateFullSuite(HashTableTests) );
 			suite.addTest( TestUtils.generateFullSuite(QueueTests) );
 			suite.addTest( TestUtils.generateFullSuite(InstanceFactoryTests) );
