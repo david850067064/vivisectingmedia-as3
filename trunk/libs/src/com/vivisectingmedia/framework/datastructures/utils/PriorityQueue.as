@@ -84,7 +84,7 @@ package com.vivisectingmedia.framework.datastructures.utils
 					if(data.priority > priorityItem.priority)
 					{
 						// found placement... add then break
-						var placement:int = ((i - 1) < 0) ? 0 : 1;
+						var placement:int = ((i - 1) < 0) ? 0 : i;
 						_table.splice(placement, 0, priorityItem);
 						return;
 					}
