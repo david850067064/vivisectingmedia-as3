@@ -92,6 +92,9 @@ package com.vivisectingmedia.framework.controllers.abstracts
 			return currentOverrides;
 		}
 		
+		public function get uid():Object {
+			return null;
+		}
 		public function start():void
 		{
 			currentPhase = TaskEvent.TASK_START;

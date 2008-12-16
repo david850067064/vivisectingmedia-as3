@@ -26,21 +26,28 @@ package com.vivisectingmedia.framework.controllers.interfaces
 {
 	import flash.events.IEventDispatcher;
 	
-	public interface ITask extends IEventDispatcher, ITaskBase
+	public interface ITask extends IEventDispatcher
 	{
-		function get ready():Boolean
+		function get ready():Boolean;
 		
 		function get phase():String;
 		
-		function start():void
+		function get priority():uint;
 		
-		function pause():void
+		function get type():String;
 		
-		function cancel():void
+		function get taskOverrides():Array;
 		
-		function inQueue():void
+		function get uid():Object;
+
+		function start():void;
 		
-		function inWaitingForReady():void
+		function pause():void;
 		
+		function cancel():void;
+		
+		function inQueue():void;
+		
+		function inWaitingForReady():void;		
 	}
 }

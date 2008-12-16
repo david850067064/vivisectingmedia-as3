@@ -24,6 +24,7 @@
  * ***** END MIT LICENSE BLOCK ***** */
 package com.vivisectingmedia.framework.datastructures.tasks
 {
+	import com.vivisectingmedia.framework.controllers.events.TaskEvent;
 	import com.vivisectingmedia.framework.controllers.interfaces.ITask;
 	import com.vivisectingmedia.framework.controllers.interfaces.ITaskGroup;
 	import com.vivisectingmedia.framework.datastructures.utils.PriorityQueue;
@@ -48,10 +49,15 @@ package com.vivisectingmedia.framework.datastructures.tasks
 	 */
 	public class TaskGroup extends EventDispatcher implements ITaskGroup
 	{
+		
+		
 		/* PUBLIC PROPERTIES */
+		public static const GROUP_NOT_QUEUED:String = "GROUP_NOT_QUEUED";
 		
 		/* PROTECTED PROPERTEIS */
 		protected var taskQueue:PriorityQueue;
+		protected var processedQueue:PriorityQueue;
+		protected var currentPhase:String = GROUP_NOT_QUEUED;
 		
 		/* PRIVATE PROPERTIES */
 		private var __type:String;
@@ -71,10 +77,12 @@ package com.vivisectingmedia.framework.datastructures.tasks
 			super(this);
 			
 			taskQueue = new PriorityQueue();
+			processedQueue = new PriorityQueue();
+			
 			__groupOverrides = new Array();
 			__type = type;
 			__priority = priority;
-			__uid = uid
+			__uid = uid;
 		}
 		
 		/**
@@ -146,12 +154,18 @@ package com.vivisectingmedia.framework.datastructures.tasks
 		 * Adds a single task to the task group.  The added
 		 * task is stored by its priority within the task
 		 * group.
-		 *  
+		 * <br />
+		 *  Tasks can only be added if the group is not already in the queue. Error will be thrown.
+		 * 
 		 * @param task
 		 * 
 		 */
 		public function addTask(task:ITask):void
 		{
+			// Throw error if group is not in the base phase
+			if(currentPhase != GROUP_NOT_QUEUED) {
+				throw new Error("No task can be added one group is no longer in the GROUP_NOT_QUEUED phase.  Current phase is " + currentPhase);
+			}
 			taskQueue.addItem(task, task.priority);
 		}
 		
@@ -172,12 +186,26 @@ package com.vivisectingmedia.framework.datastructures.tasks
 				taskQueue.addItem(task, task.priority);
 			}
 		}
-		
+		/**
+		 * Returns all tasks still in queue or that have been proccessed
+		 */
 		public function get tasks():Array
 		{
-			return taskQueue.items;
+			
+			return taskQueue.items.concat(processedQueue.items);
 		}
 		
+		public function get phase():String
+		{
+			return currentPhase;
+		}
+		
+		/**
+		 * TaskGroups are always ready and will return true
+		 */
+		public function get ready():Boolean{
+			return true;
+		}
 		/**
 		 * Removes all instances of a specific task from the group.
 		 * When removed the task's cancel() method is called to
@@ -188,35 +216,49 @@ package com.vivisectingmedia.framework.datastructures.tasks
 		 */
 		public function removeTask(task:ITask):void
 		{
-			taskQueue.removeItem(task);
-			task.cancel();
+			// Remove from taskQueue if it is inside of queue
+			if(!taskQueue.removeItem(task)) {
+				processedQueue.removeItem(task);
+			}
+			// Cancel task if it has not completed or already been canceled
+			if(task.phase != TaskEvent.TASK_CANCEL && task.phase != TaskEvent.TASK_COMPLETE) {
+				task.cancel();
+			}
 		}
 		
 		/**
 		 * Removes all tasks from the group. When removed 
-		 * the task's cancel() method is called to
-		 * allow listeners the ability to handle the removal.
+		 * the task's cancel() method is called on all unproccessed 
+		 * tasks to allow listeners the ability to handle the removal.
+		 * All proccessed tasks will simply be removed from the group.
+		 * No further action is taken.
 		 * 
 		 */
 		public function removeAllTasks():void
 		{
-			while(taskQueue.hasItems)
-			{
-				ITask(taskQueue.next()).cancel();
+			for each(var task:ITask in this.tasks) {
+				removeTask(task);
 			}
 		}
 		
 		/**
 		 * Returns the next task in the group with the highest
 		 * priority task first.  This method removes the task
-		 * from the group.
+		 * from the task queue and addes to a proccessed queue
 		 *  
 		 * @return The next task in the group.
 		 * 
 		 */
 		public function next():ITask
 		{
-			return taskQueue.next();
+			// Remove from queue and hold on to it in the processed queue
+			var task:ITask = taskQueue.next();
+			processedQueue.addItem(task);
+			
+			// Listen for complete or cancel events
+			task.addEventListener(TaskEvent.TASK_COMPLETE, handleTaskEvent);
+			task.addEventListener(TaskEvent.TASK_CANCEL, handleTaskEvent);
+			return task;
 		}
 		
 		public function getTaskIndex(task:ITask):int {
@@ -231,5 +273,57 @@ package com.vivisectingmedia.framework.datastructures.tasks
 			return -1;
 		}
 		
+		public function start():void {
+			currentPhase = TaskEvent.TASK_START;
+			dispatchEvent(new TaskEvent(TaskEvent.TASK_START));
+		}
+		
+		public function pause():void {
+			currentPhase = TaskEvent.TASK_PAUSE;
+			dispatchEvent(new TaskEvent(TaskEvent.TASK_PAUSE));
+		}
+		
+		public function cancel():void {
+			// Set phoase to Cancel
+			currentPhase = TaskEvent.TASK_CANCEL;
+			
+			// Cancel all items in group
+			for each(var task:ITask in this.tasks) {
+				// Only tasks that have not completed or been canceled
+				if(task.phase != TaskEvent.TASK_CANCEL || task.phase != TaskEvent.TASK_COMPLETE) {
+					task.cancel();
+				}
+			}
+			// Dispatch Cancel after all task cancel has been executed
+			// TODO - Maybe Cancel should only fire when all Tasks have dispatched their cancel events?
+			dispatchEvent(new TaskEvent(TaskEvent.TASK_CANCEL));
+
+		}
+		
+		public function inQueue():void {
+			currentPhase = TaskEvent.TASK_QUEUED;
+			dispatchEvent(new TaskEvent(TaskEvent.TASK_QUEUED));
+		}
+		
+		public function inWaitingForReady():void {
+			currentPhase = TaskEvent.TASK_WAITING_FOR_READY;
+			dispatchEvent(new TaskEvent(TaskEvent.TASK_WAITING_FOR_READY));
+		}
+		
+		protected function handleTaskEvent(event:TaskEvent):void
+		{
+			var task:ITask = ITask(event.currentTarget);
+			switch(event.type)
+			{
+				case TaskEvent.TASK_CANCEL:
+				case TaskEvent.TASK_COMPLETE:
+					if(!this.taskQueue.hasItems) {
+						currentPhase = TaskEvent.TASK_COMPLETE;
+						dispatchEvent(new TaskEvent(TaskEvent.TASK_COMPLETE));
+					}
+				break;
+				
+			}
+		}
 	}
 }

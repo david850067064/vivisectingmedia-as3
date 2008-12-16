@@ -106,16 +106,19 @@ package com.vivisectingmedia.framework.datastructures.utils
 		 * @param item The item to remove from the queue.
 		 * @param numberOfInstances The number of instances to look for.
 		 * 
+		 * @return Boolean True if one or more instances were found, otherwise False
+		 * 
 		 */
-		public function removeItem(item:*, numberOfInstances:int = int.MAX_VALUE):void
+		public function removeItem(item:*, numberOfInstances:int = int.MAX_VALUE):Boolean
 		{
 			// verify that we are removing at least one item (negatives not allowed)
-			if(numberOfInstances < 1) return;
+			if(numberOfInstances < 1) return false;
 			
 			// loop over and pull out the instances
 			var clone:Array = new Array();
 			var count:int = 0;
-			var len:int = _table.length;			
+			var len:int = _table.length;
+			var itemFound:Boolean;			
 			for(var i:uint = 0; i < len; i++)
 			{
 				if(PriorityWrapper(_table[i]).item == item)
@@ -126,6 +129,7 @@ package com.vivisectingmedia.framework.datastructures.utils
 						clone = clone.concat(_table.slice(i));
 						break;
 					}
+					itemFound = true;
 				} else {
 					clone.push(_table[i]);
 				}
@@ -133,6 +137,8 @@ package com.vivisectingmedia.framework.datastructures.utils
 			
 			// reset the table
 			_table = clone;
+			
+			return itemFound;
 		}
 		
 		/**
