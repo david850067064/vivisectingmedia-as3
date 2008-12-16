@@ -42,6 +42,7 @@ package com.vivisectingmedia.libtests.tests
 	{
 		
 		private const GROUP_TYPE:String = "Test_Group";
+		private const GROUP_UID:int = 11111;
 		
 		public var taskGroup:TaskGroup
 		
@@ -53,7 +54,7 @@ package com.vivisectingmedia.libtests.tests
 		override public function setUp():void
 		{
 			// create a new controller
-			taskGroup = new TaskGroup(GROUP_TYPE);
+			taskGroup = new TaskGroup(GROUP_TYPE,0,GROUP_UID);
 		}
 		
 		override public function tearDown():void
@@ -69,7 +70,10 @@ package com.vivisectingmedia.libtests.tests
 			// Test Group has same type as defined in constructor
 			assertTrue("Group should have same type as defined in constructor", taskGroup.type == GROUP_TYPE);
 		}
-		
+		public function testGroupId():void {
+			// Test Group has same uid as defined in constructor
+			assertTrue("Group should have same uid as defined in constructor", taskGroup.uid == GROUP_UID);
+		}
 		public function testAddTasks():void {
 			var task0:TestTaskPriority0 = new TestTaskPriority0();
 			var task1:TestTaskPriority1 = new TestTaskPriority1();
@@ -80,6 +84,7 @@ package com.vivisectingmedia.libtests.tests
 			
 			// Add first item
 			taskGroup.addTask(task4);
+			
 			// Verify one task can be added to the group
 			assertTrue("Task should be first item", taskGroup.getTaskIndex(task4) == 0);
 			// Verify only one task is in group
@@ -89,6 +94,7 @@ package com.vivisectingmedia.libtests.tests
 			
 			// Add second item
 			taskGroup.addTask(task5);
+			
 			// Verify priority 5 task is behind priority 4
 			assertTrue("Task should be second item", taskGroup.getTaskIndex(task5) == 1);
 			// Verify group has two tasks
@@ -106,7 +112,9 @@ package com.vivisectingmedia.libtests.tests
 			
 			// Add fourth item (task3, should be second item)
 			taskGroup.addTask(task3);
+			
 			// Verify 4 items are in group
+			
 			assertTrue("Four tasks should be in group", taskGroup.tasks.length == 4);			
 			// Verify other 5 tasks are in proper order (2,3,4,5)
 			assertTrue("Task 2 should be first item in group", taskGroup.getTaskIndex(task2) == 0);
@@ -114,10 +122,13 @@ package com.vivisectingmedia.libtests.tests
 			assertTrue("Task 4 should be third item in group", taskGroup.getTaskIndex(task4) == 2);
 			assertTrue("Task 5 should be fourth item in group", taskGroup.getTaskIndex(task5) == 3);
 			
+			
 			// Add fifth item (task0, should be first item)
 			taskGroup.addTask(task0);
+			
 			// Verify 5 items are in group
-			assertTrue("Five tasks should be in group", taskGroup.tasks.length == 5);			
+			assertTrue("Five tasks should be in group", taskGroup.tasks.length == 5);	
+					
 			// Verify proper order (0,2,3,4,5)
 			assertTrue("Task 0 should be first item in group", taskGroup.getTaskIndex(task0) == 0);
 			assertTrue("Task 2 should be second item in group", taskGroup.getTaskIndex(task2) == 1);
@@ -128,8 +139,10 @@ package com.vivisectingmedia.libtests.tests
 			
 			// Add sixth item (task1, should be second item)
 			taskGroup.addTask(task1);
+			
 			// Verify 6 items are in group
-			assertTrue("Six tasks should be in group", taskGroup.tasks.length == 6);			
+			assertTrue("Six tasks should be in group", taskGroup.tasks.length == 6);	
+					
 			// Verify proper order (0,12,3,4,5)
 			assertTrue("Task 0 should be first item in group", taskGroup.getTaskIndex(task0) == 0);
 			assertTrue("Task 1 should be secon item in group", taskGroup.getTaskIndex(task1) == 1);
@@ -144,12 +157,16 @@ package com.vivisectingmedia.libtests.tests
 		public function testHasTask():void {
 			var task:TestTask = new TestTask();
 			
+			// Add one task
 			taskGroup.addTask(task);
 			
+			// Verify group inidicates it has at least one task
 			assertTrue("Task Group should have task", taskGroup.hasTask);
 			
+			// Remove task from group
 			taskGroup.removeTask(task);
 			
+			// Verify the group no has no tasks
 			assertFalse("Task Group should NOT have task", taskGroup.hasTask);
 		}
 		
@@ -222,60 +239,64 @@ package com.vivisectingmedia.libtests.tests
 			var task3:TestTaskPriority3 = new TestTaskPriority3();
 			
 			// Add three tasks
-			taskGroup.addTask(task0);
 			taskGroup.addTask(task2);
+			taskGroup.addTask(task0);
 			taskGroup.addTask(task1);
 			
+			// Verify group next functionality gets tasks based on priority
 			assertTrue("Next should return task0", taskGroup.next() == task0);
 			assertTrue("Next should return task1", taskGroup.next() == task1);
 			assertTrue("Next should return task2", taskGroup.next() == task2);			
 		 }
 		 /**
 		 * Test the TaskGroup cancel functionality. Upon canceling
-		 * Group, all tasks within the group should also be canceled
+		 * Group, all tasks within the group should also be canceled.
+		 * Verifies the group fires cancel event.
 		 */
 		 public function testCancelGroup():void {
 		 	var task0:TestTaskPriority0 = new TestTaskPriority0();
 			var task1:TestTaskPriority1 = new TestTaskPriority1();
 			
+			// Add two tasks to group
 			taskGroup.addTask(task0);
 			taskGroup.addTask(task1);
+			
 			// Listen for Task Group Cancel Event
 			taskGroup.addEventListener(TaskEvent.TASK_CANCEL, addAsync(handleTaskCanceled,500),false, 0,true);
 		 	
+		 	// Cancel Group
 		 	taskGroup.cancel();
 		 }
+		 /**
+		 * Verify group cancel will cancel all tasks in the queue. 
+		 * Verifies the task is canceled
+		 */
 		 public function testCancelGroupVerifyTask():void {
 		 	var task0:TestTaskPriority0 = new TestTaskPriority0();
 			var task1:TestTaskPriority1 = new TestTaskPriority1();
 			
+			// Add two tasks to group
 			taskGroup.addTask(task0);
 			taskGroup.addTask(task1);
+			
 			// Listen for Task Group Cancel Event
 			task1.addEventListener(TaskEvent.TASK_CANCEL, addAsync(handleTaskCanceled,500),false, 0,true);
-		 	
+			
+		 	// Cancel group
 		 	taskGroup.cancel();
 		 	
 		 }
-		 public function testGroupRead():void {
-		 	var readyTask:TestTask = new TestTask(TestTask.BASIC_TASK);
-			var notReadyTask:TestTask = new TestTaskPriority1(TestTask.NOT_READY);
-			
-			// Test Ready
-			taskGroup.addTask(readyTask);
-			assertTrue("Group should be ready", taskGroup.ready);
-			// Test Ready
-			taskGroup.addTask(notReadyTask);
-			assertTrue("Group should NOT be ready", taskGroup.ready);
-			
-		 }
+		 /**
+		 * Verify the group fires a complete event when all it's tasks
+		 * are completed and the group queue is empty 
+		 */
 		 public function testGroupComplete():void {
 		 	var task0:TestTaskPriority0 = new TestTaskPriority0();
 			var task1:TestTaskPriority1 = new TestTaskPriority1();
 			
 			taskGroup.addTask(task0);
 			taskGroup.addTask(task1);
-			// Listen for Task Group Cancel Event
+			// Listen for Task Group Complete Event
 			taskGroup.addEventListener(TaskEvent.TASK_COMPLETE, addAsync(handleTaskComplete,500),false, 0,true);
 		 	
 		 	taskGroup.next();
@@ -284,6 +305,93 @@ package com.vivisectingmedia.libtests.tests
 		 	task0.triggerComplete();
 		 	task1.triggerComplete();
 		 }
+		 
+		 /**
+		 * Verify that a group can not be added to a group
+		 */
+		 public function testAddGroup():void {
+		 	var taskGroup2:TaskGroup = new TaskGroup("TYPE");
+		 	var errorThrown:Boolean;
+		 	
+		 	try {
+		 		taskGroup.addTask(taskGroup2);
+		 	}
+			catch(err:Error) {
+				errorThrown = true
+			}		 	
+			
+			assertTrue("Error should have been thrown when group is added to another group");
+		 }
+		 
+		 
+		 /**
+		 * Test verifies the override capabilities of a Task
+		 * when both tasks are of the same type and Id. New task should not be added
+		 */
+		 public function testTaskOverrideWithSameTypesSameId():void {
+		 	var task1:ITask = new AbstractTask("SAME_TYPE", 0, 11111,true);
+		 	var taskIgnore:ITask = new AbstractTask("SAME_TYPE", 0, 11111,true);
+		 	
+		 	// Add both tasks to controller
+		 	taskGroup.addTask(task1);
+		 	taskGroup.addTask(taskIgnore);
+		 	
+		 	// Verify second task is ignored since both tasks have same id and uid
+		 	taskIgnore.addEventListener(TaskEvent.TASK_IGNORED, addAsync(handleTaskIgnore, 500),false,0,true);
+		 	
+		 	// Add both tasks to controller
+		 	taskGroup.addTask(task1);
+		 	taskGroup.addTask(taskIgnore);
+		 }
+		 /**
+		 * Test verifies the override capabilities of a Task
+		 * when both tasks are of the same type and differnt Ids
+		 */
+		 public function testTaskOverrideWithSameTypeDifferentId():void {
+		 	var task1:ITask = new AbstractTask("SAME_TYPE", 0, 11111,true);
+		 	var task2:ITask = new AbstractTask("SAME_TYPE", 0, 99999,true);
+		 	
+		 	// Add both tasks to controller
+		 	taskGroup.addTask(task1);
+		 	taskGroup.addTask(task2);
+			
+			// Verify  First task is canceled
+			assertTrue("First task should be canceled", task1.phase == TaskEvent.TASK_CANCEL);
+		 }
+		 /**
+		 * Test verifies the override capabilities of a Task
+		 * when both tasks are of the different type and s Ids
+		 */
+		 public function testTaskOverrideWithDifferentTypesSameId():void {
+		 	var task1:ITask = new AbstractTask("SAME_TYPE", 0, 11111,true);
+		 	var task2:ITask = new AbstractTask("DIFFERNT_TYPE", 0, 11111,true);
+		 	
+		 	// Add both tasks to controller
+		 	taskGroup.addTask(task1);
+		 	taskGroup.addTask(task2);
+			
+			// Verfiy first task is NOT canceled and second is not canceled
+			assertTrue("First task should NOT be canceled", task1.phase != TaskEvent.TASK_CANCEL);
+			assertTrue("Second task should NOT be canceled", task1.phase != TaskEvent.TASK_CANCEL);
+		 }
+		 /**
+		 * Test verifies the override capabilities of a Task
+		 * when both tasks are of the different type and differnt Ids
+		 */
+		 public function testTaskOverrideWithDifferentTypesDifferentId():void {
+		 	var task1:ITask = new AbstractTask("SAME_TYPE", 0, 11111,true);
+		 	var task2:ITask = new AbstractTask("DIFFERNT_TYPE", 0, 99999,true);
+		 	
+		 	// Add both tasks to controller
+		 	taskGroup.addTask(task1);
+		 	taskGroup.addTask(task2);
+			
+			// Verfiy first task is NOT canceled and second is not canceled
+			assertTrue("First task should NOT be canceled", task1.phase != TaskEvent.TASK_CANCEL);
+			assertTrue("Second task should NOT be canceled", task1.phase != TaskEvent.TASK_CANCEL);
+		 }
+		 
+		 
 		 // test specific handlers
 		// generic handlers for task event
 		protected function handleTaskQueued(event:TaskEvent):void
@@ -317,6 +425,12 @@ package com.vivisectingmedia.libtests.tests
 			// verify the current phase is set
 			var currentTask:ITask = ITask(event.currentTarget);
 			assertTrue("The task's phase was not set to cancel.", currentTask.phase == TaskEvent.TASK_CANCEL);
+		}
+		protected function handleTaskIgnore(event:TaskEvent):void
+		{
+			// verify the current phase is set
+			var currentTask:ITask = ITask(event.currentTarget);
+			assertTrue("The task's phase was not set to ignore.", currentTask.phase == TaskEvent.TASK_IGNORED);
 		}
 	}
 }

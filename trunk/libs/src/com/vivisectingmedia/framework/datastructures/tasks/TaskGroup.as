@@ -44,6 +44,22 @@ package com.vivisectingmedia.framework.datastructures.tasks
 	 * type.  The individual type of the task is ignored in this
 	 * case.</p>
 	 * 
+	 * <p>Tasks added to the group can override the same was as if they were
+	 * added directly to the TaskController. Upon adding a task, the TaskGroup
+	 * will evaluate the tasks overrides and the tasks selfOverrding boolean 
+	 * and will take appropriate action.  The functionality is similar to the
+	 * TaskController's override mechinism.
+	 * </p>
+	 * 
+	 * <p>TaskGroups can NOT be added to other TaskGroups at this time. A generic error will
+	 * be thrown if this occurs</p>
+	 * 
+	 * <p>Note: Once a TaskGroup has been added to the TaskController and queued, 
+	 * the TaskGroup will no longer accept additional Task and will throw a generic error.
+	 * </p>
+	 * 
+	 * @see com.vivisectingmedia.framework.controllers.TaskController
+	 * 
 	 * @author James Polanco
 	 * 
 	 */
@@ -55,7 +71,9 @@ package com.vivisectingmedia.framework.datastructures.tasks
 		public static const GROUP_NOT_QUEUED:String = "GROUP_NOT_QUEUED";
 		
 		/* PROTECTED PROPERTEIS */
+		// Queue of tasks that are left to be executed
 		protected var taskQueue:PriorityQueue;
+		// Queue of all tasks that are either active, complete, canceled, or errored
 		protected var processedQueue:PriorityQueue;
 		protected var currentPhase:String = GROUP_NOT_QUEUED;
 		
@@ -64,15 +82,18 @@ package com.vivisectingmedia.framework.datastructures.tasks
 		private var __groupOverrides:Array;
 		private var __priority:int;
 		private var __uid:Object;
+		private var __selfOverride:Boolean;
 		
 		/**
 		 * Constructor.  Sets the groups type and priority.
 		 * 
 		 * @param type The type of Task
-		 * @param groupPriority
+		 * @param priority The priority of the TaskGroup inside of the TaskController. Default is 5. Lower the number the higher the priority.
+		 * @param uid The id set to this group. uid can be of any type. Default is null
+		 * @param selfOverride Boolean indicating if the TaskGroup can override other TaskGroups of the same type with same uid. Default false
 		 * 
 		 */
-		public function TaskGroup(type:String, priority:int = 5, uid:Object = null)
+		public function TaskGroup(type:String, priority:int = 5, uid:Object = null, selfOverride:Boolean = false)
 		{
 			super(this);
 			
@@ -83,6 +104,7 @@ package com.vivisectingmedia.framework.datastructures.tasks
 			__type = type;
 			__priority = priority;
 			__uid = uid;
+			__selfOverride = selfOverride
 		}
 		
 		/**
@@ -111,7 +133,7 @@ package com.vivisectingmedia.framework.datastructures.tasks
 			return __priority;
 		}
 		/**
-		 * Unique id of the group instance.
+		 * Id of the group instance. Used in applying self overrides.
 		 * 
 		 * @return id of the group
 		 */
@@ -151,24 +173,135 @@ package com.vivisectingmedia.framework.datastructures.tasks
 		}
 		
 		/**
-		 * Adds a single task to the task group.  The added
+		 * <p>Adds a single task to the task group.  The added
 		 * task is stored by its priority within the task
-		 * group.
-		 * <br />
-		 *  Tasks can only be added if the group is not already in the queue. Error will be thrown.
+		 * group.</p>
 		 * 
-		 * @param task
+		 * <p>A group can NOT be added to another group. Error will be thrown.</p>
+		 * 
+		 * <p>Tasks can only be added if the group is not already in the queue. Error will be thrown.</p>
+		 * 
+		 * @param task New task to be added to group.
 		 * 
 		 */
 		public function addTask(task:ITask):void
 		{
+			// Throw error if a group is added to a this group
+			if(task is ITaskGroup) {
+				throw new Error("TaskGroups  can not be added to other TaskGroups");
+			}
+			
 			// Throw error if group is not in the base phase
 			if(currentPhase != GROUP_NOT_QUEUED) {
 				throw new Error("No task can be added one group is no longer in the GROUP_NOT_QUEUED phase.  Current phase is " + currentPhase);
 			}
-			taskQueue.addItem(task, task.priority);
+			
+			// Apply overrides
+			// If overrides dont override this task add task
+			if(applyOverrides(task)) { 
+				// Determine priority and placement
+				taskQueue.addItem(task, task.priority);
+			}
+			else {
+				// Trigger ignore on task
+				task.ignore();
+			}
 		}
 		
+		/**
+		 * <p>
+		 * Used to find and remove any tasks in the current group
+		 * queue that are overriden by a new task that has been
+		 * added to the group.
+		 * </p>
+		 * <p>
+		 * If the new task is selfOverriding two scenarios will play out.
+		 * <ul>
+		 * 	<li>If new task has same type as a task in the queue but with a differnt uid, the existing task removed and canceled. The new task is then added.</li>
+		 *  <li>If new task has same type and the same uid as one in the queue, the new task is ignored and not added to the queue</li>
+		 * </ul>
+		 * </p>
+		 * @param newTask New Task to be added to queue
+		 * 
+		 * @return Boolean True if newTasks overrides were processed,otherwise false
+		 */
+		protected function applyOverrides(newTask:ITask):Boolean
+		{
+			var overrides:Array = newTask.taskOverrides;
+			
+			// No overrides and no not selfoverriding
+			if(overrides.length < 1 && !newTask.selfOverride) return true; 
+			
+			var newList:Array = new Array();
+			var match:Boolean;
+			// Only items left in the queue - assumption is proccessed queue is empty if we are
+			// applying overrides.
+			var itemList:Array = taskQueue.items;
+			
+			// Handle self override
+			// Loop over all tasks looking for self override
+			if(newTask.selfOverride) {
+				for each(var task:ITask in itemList)
+				{
+					// Reset match to not found
+					match = false;
+					
+					// If match not found and task is self overriding  and task types are the same
+					if(!match && newTask.selfOverride && newTask.type == task.type) {
+						// If tasks has same uid, mark the newTask so we dont keep it
+						if(newTask.uid == task.uid) {
+							// Dont keep the newTask, exit now so we dont change the queue
+							return false;
+							
+							// Add task to new list
+							newList.push(task);
+						}
+						else {
+							// Found a match, cancel it
+							if(task is ITask) ITask(task).cancel();
+						}
+					}
+				}	
+			}
+			// Set new itemList after removing selfoverrides, reset newList
+			itemList = newList
+			newList = new Array();
+			
+			// Handle Task overrides
+			var len:int = overrides.length;	
+			for each(task in itemList)
+			{
+				// Reset match to not found
+				match = false;
+				// Loop over all overrides
+				for(var i:uint = 0; i < len; i++) 
+				{ 
+					// If task has same type as override - cancel it!
+					if(task.type == overrides[i]) 
+					{
+						// found a match, cancel it
+						match == true; 
+						if(task is ITask) ITask(task).cancel();
+					}
+				}
+				// Only add task if a match was not found
+				if(!match) {
+					newList.push(task);
+				}
+			}
+			// Update to the stripped list
+			var newTaskQueue:PriorityQueue = new PriorityQueue();
+			
+			// Create new task queue based on new list array
+			for each(task in newList) {
+				newTaskQueue.addItem(task, task.priority);
+			}
+			// Set new queue to task queue
+			taskQueue = newTaskQueue;
+			
+			// Return, we are keeping the new task
+			return true;
+		}
 		/**
 		 * The tasks value is the active array of tasks
 		 * within the task group.  When setting this value
@@ -206,6 +339,14 @@ package com.vivisectingmedia.framework.datastructures.tasks
 		public function get ready():Boolean{
 			return true;
 		}
+		
+		public function get selfOverride():Boolean {
+			return __selfOverride;
+		}
+		public function set selfOverride(value:Boolean):void {
+			__selfOverride = value;
+		}
+		
 		/**
 		 * Removes all instances of a specific task from the group.
 		 * When removed the task's cancel() method is called to
@@ -244,7 +385,7 @@ package com.vivisectingmedia.framework.datastructures.tasks
 		/**
 		 * Returns the next task in the group with the highest
 		 * priority task first.  This method removes the task
-		 * from the task queue and addes to a proccessed queue
+		 * from the task queue and addes to a proccessed queue.
 		 *  
 		 * @return The next task in the group.
 		 * 
@@ -261,6 +402,14 @@ package com.vivisectingmedia.framework.datastructures.tasks
 			return task;
 		}
 		
+		/**
+		 * Returns the index of a task in the taskQueue. Tasks
+		 * that have been proccessed will not be found. Check 
+		 * the phase of a task if you are sure a task is part of the group.
+		 * 
+		 * @param task
+		 * @return 0 or greater if task is found, otherwise -1
+		 */
 		public function getTaskIndex(task:ITask):int {
 			// Loop through all tasks, if the same task is found
 			// return index
@@ -272,17 +421,29 @@ package com.vivisectingmedia.framework.datastructures.tasks
 			// Return -1 if the task is NOT found
 			return -1;
 		}
-		
+		/**
+		 * Method is used to change groups phase to start and dispath event.
+		 * Method should NOT be called by anyone but the TaskController.
+		 */
 		public function start():void {
 			currentPhase = TaskEvent.TASK_START;
 			dispatchEvent(new TaskEvent(TaskEvent.TASK_START));
 		}
-		
+		/**
+		 * Method is used to change groups phase to pause and dispath event.
+		 * Method should NOT be called by anyone but the TaskController.
+		 */
 		public function pause():void {
 			currentPhase = TaskEvent.TASK_PAUSE;
 			dispatchEvent(new TaskEvent(TaskEvent.TASK_PAUSE));
 		}
-		
+		/**
+		 * Method is used to change groups phase to canel and dispath event.
+		 * The phase is first changed and then all tasks in the group are canceled before
+		 * cancel event is dispatched (TestEvent.TASK_CANCEL).
+		 * 
+		 * Method should NOT be called by anyone but the TaskController.
+		 */
 		public function cancel():void {
 			// Set phoase to Cancel
 			currentPhase = TaskEvent.TASK_CANCEL;
@@ -299,23 +460,43 @@ package com.vivisectingmedia.framework.datastructures.tasks
 			dispatchEvent(new TaskEvent(TaskEvent.TASK_CANCEL));
 
 		}
-		
+		/**
+		 * Method is used to change groups phase to queued and dispath event.
+		 * Method should NOT be called by anyone but the TaskController.
+		 */
 		public function inQueue():void {
 			currentPhase = TaskEvent.TASK_QUEUED;
 			dispatchEvent(new TaskEvent(TaskEvent.TASK_QUEUED));
 		}
-		
+		/**
+		 * Method is used to change groups phase to wait for ready and dispath event.
+		 * Method should NOT be called by anyone but the TaskController.
+		 */
 		public function inWaitingForReady():void {
 			currentPhase = TaskEvent.TASK_WAITING_FOR_READY;
 			dispatchEvent(new TaskEvent(TaskEvent.TASK_WAITING_FOR_READY));
 		}
-		
+		/**
+		 * Method is used to change groups phase to ignore and dispath event.
+		 * Method should NOT be called by anyone but the TaskController.
+		 */
+		public function ignore():void
+		{
+			currentPhase = TaskEvent.TASK_IGNORED;
+			dispatchEvent(new TaskEvent(TaskEvent.TASK_IGNORED));
+		}
+
+		/**
+		 * Method handles group tasks that have been completed.
+		 * If the no more tasks are in queue, a complete event is dispatched.
+		 * 
+		 * @param event
+		 */
 		protected function handleTaskEvent(event:TaskEvent):void
 		{
 			var task:ITask = ITask(event.currentTarget);
 			switch(event.type)
 			{
-				case TaskEvent.TASK_CANCEL:
 				case TaskEvent.TASK_COMPLETE:
 					if(!this.taskQueue.hasItems) {
 						currentPhase = TaskEvent.TASK_COMPLETE;
