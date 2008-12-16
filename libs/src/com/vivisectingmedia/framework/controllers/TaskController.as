@@ -26,7 +26,6 @@ package com.vivisectingmedia.framework.controllers
 {
 	import com.vivisectingmedia.framework.controllers.events.TaskEvent;
 	import com.vivisectingmedia.framework.controllers.interfaces.ITask;
-	import com.vivisectingmedia.framework.controllers.interfaces.ITaskBase;
 	import com.vivisectingmedia.framework.controllers.interfaces.ITaskGroup;
 	import com.vivisectingmedia.framework.datastructures.utils.HashTable;
 	import com.vivisectingmedia.framework.datastructures.utils.PriorityQueue;
@@ -74,12 +73,7 @@ package com.vivisectingmedia.framework.controllers
 		}
 		
 		public function addTaskGroup(group:ITaskGroup):void {
-			// Apply overrides
-			applyOverrides(group.taskOverrides);
-			// Add group to queue
-			taskQueue.addItem(group, group.priority);
-			// Call next to execute
-			next();
+			addTask(group);
 		}
 		
 		/**
@@ -99,19 +93,19 @@ package com.vivisectingmedia.framework.controllers
 			var len:int = overrides.length;		
 			var itemList:Array = taskQueue.items;
 				
-			for each(var taskBase:ITaskBase in itemList)
+			for each(var task:ITask in itemList)
 			{
 				var match:Boolean = false;
 				for(var i:uint = 0; i < len; i++) 
 				{ 
-					if(taskBase.type == overrides[i]) 
+					if(task.type == overrides[i]) 
 					{
 						// found a match, cancel it
 						match == true; 
-						if(taskBase is ITask) ITask(taskBase).cancel();
+						if(task is ITask) ITask(task).cancel();
 					}
 				}
-				if(!match) newList.addItem(taskBase, taskBase.priority);
+				if(!match) newList.addItem(task, task.priority);
 			}
 			
 			// update to the stripped list
@@ -127,14 +121,26 @@ package com.vivisectingmedia.framework.controllers
 			if(activeTasks.length < __activeTaskLimit)
 			{
 				// we need to take action, first check ready queue then go to task queue
-				var nextTask:ITaskBase = ITaskBase(taskQueue.peek());
+				var nextTask:ITask = ITask(taskQueue.peek());
 				
+				// If nextTask is canceled pop from queue
+				if(nextTask.phase == TaskEvent.TASK_CANCEL) {
+					taskQueue.next();
+					// Recursion, call this method again for next item
+					this.next();
+					return;
+				}
 				// determine if it is a task or task base
 				var task:ITask;
 				if(nextTask is ITaskGroup)
 				{
+					// Mark group as in queue
+					nextTask.inQueue();
+					
 					task = ITaskGroup(nextTask).next();
+					// If no more tasks are in the group,pop group from queue
 					if(!ITaskGroup(nextTask).hasTask) taskQueue.next();
+					
 				} else {
 					task = ITask(taskQueue.next());
 				}

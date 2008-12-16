@@ -24,6 +24,9 @@
  * ***** END MIT LICENSE BLOCK ***** */
 package com.vivisectingmedia.libtests.tests
 {
+	import com.vivisectingmedia.framework.controllers.abstracts.AbstractTask;
+	import com.vivisectingmedia.framework.controllers.events.TaskEvent;
+	import com.vivisectingmedia.framework.controllers.interfaces.ITask;
 	import com.vivisectingmedia.framework.datastructures.tasks.TaskGroup;
 	import com.vivisectingmedia.libtests.elements.tasks.TestTask;
 	import com.vivisectingmedia.libtests.elements.tasks.TestTaskPriority0;
@@ -227,6 +230,93 @@ package com.vivisectingmedia.libtests.tests
 			assertTrue("Next should return task1", taskGroup.next() == task1);
 			assertTrue("Next should return task2", taskGroup.next() == task2);			
 		 }
-		 
+		 /**
+		 * Test the TaskGroup cancel functionality. Upon canceling
+		 * Group, all tasks within the group should also be canceled
+		 */
+		 public function testCancelGroup():void {
+		 	var task0:TestTaskPriority0 = new TestTaskPriority0();
+			var task1:TestTaskPriority1 = new TestTaskPriority1();
+			
+			taskGroup.addTask(task0);
+			taskGroup.addTask(task1);
+			// Listen for Task Group Cancel Event
+			taskGroup.addEventListener(TaskEvent.TASK_CANCEL, addAsync(handleTaskCanceled,500),false, 0,true);
+		 	
+		 	taskGroup.cancel();
+		 }
+		 public function testCancelGroupVerifyTask():void {
+		 	var task0:TestTaskPriority0 = new TestTaskPriority0();
+			var task1:TestTaskPriority1 = new TestTaskPriority1();
+			
+			taskGroup.addTask(task0);
+			taskGroup.addTask(task1);
+			// Listen for Task Group Cancel Event
+			task1.addEventListener(TaskEvent.TASK_CANCEL, addAsync(handleTaskCanceled,500),false, 0,true);
+		 	
+		 	taskGroup.cancel();
+		 	
+		 }
+		 public function testGroupRead():void {
+		 	var readyTask:TestTask = new TestTask(TestTask.BASIC_TASK);
+			var notReadyTask:TestTask = new TestTaskPriority1(TestTask.NOT_READY);
+			
+			// Test Ready
+			taskGroup.addTask(readyTask);
+			assertTrue("Group should be ready", taskGroup.ready);
+			// Test Ready
+			taskGroup.addTask(notReadyTask);
+			assertTrue("Group should NOT be ready", taskGroup.ready);
+			
+		 }
+		 public function testGroupComplete():void {
+		 	var task0:TestTaskPriority0 = new TestTaskPriority0();
+			var task1:TestTaskPriority1 = new TestTaskPriority1();
+			
+			taskGroup.addTask(task0);
+			taskGroup.addTask(task1);
+			// Listen for Task Group Cancel Event
+			taskGroup.addEventListener(TaskEvent.TASK_COMPLETE, addAsync(handleTaskComplete,500),false, 0,true);
+		 	
+		 	taskGroup.next();
+		 	taskGroup.next();
+		 	
+		 	task0.triggerComplete();
+		 	task1.triggerComplete();
+		 }
+		 // test specific handlers
+		// generic handlers for task event
+		protected function handleTaskQueued(event:TaskEvent):void
+		{
+			// verify the current phase is set
+			var currentTask:ITask = ITask(event.currentTarget);
+			assertTrue("The task's phase was not set to queued.", currentTask.phase == TaskEvent.TASK_QUEUED);
+		}
+		
+		protected function handleTaskStart(event:TaskEvent):void
+		{
+			// verify the current phase is set
+			var currentTask:ITask = ITask(event.currentTarget);
+			assertTrue("The task's phase was not set to start.", currentTask.phase == TaskEvent.TASK_START);
+		}
+		
+		protected function handleTaskComplete(event:TaskEvent):void
+		{
+			// verify the current phase is set
+			var currentTask:ITask = ITask(event.currentTarget);
+			assertTrue("The task's phase was not set to complete.", currentTask.phase == TaskEvent.TASK_COMPLETE);
+		}
+		
+		protected function handleTaskInWaiting(event:TaskEvent):void
+		{
+			// verify the current phase is set
+			var currentTask:ITask = ITask(event.currentTarget);
+			assertTrue("The task's phase was not set to in waiting.", currentTask.phase == TaskEvent.TASK_WAITING_FOR_READY);
+		}
+		protected function handleTaskCanceled(event:TaskEvent):void {
+			// verify the current phase is set
+			var currentTask:ITask = ITask(event.currentTarget);
+			assertTrue("The task's phase was not set to cancel.", currentTask.phase == TaskEvent.TASK_CANCEL);
+		}
 	}
 }

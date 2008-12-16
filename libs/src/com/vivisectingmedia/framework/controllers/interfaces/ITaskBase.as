@@ -26,10 +26,6 @@ package com.vivisectingmedia.framework.controllers.interfaces
 {
 	public interface ITaskBase
 	{
-		function get priority():uint
 		
-		function get type():String
-		
-		function get taskOverrides():Array
 	}
 }
