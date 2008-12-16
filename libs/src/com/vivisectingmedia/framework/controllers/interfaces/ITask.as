@@ -39,6 +39,10 @@ package com.vivisectingmedia.framework.controllers.interfaces
 		function get taskOverrides():Array;
 		
 		function get uid():Object;
+		
+		function get selfOverride():Boolean;
+		
+		function set selfOverride(valu:Boolean):void;
 
 		function start():void;
 		
@@ -49,5 +53,8 @@ package com.vivisectingmedia.framework.controllers.interfaces
 		function inQueue():void;
 		
 		function inWaitingForReady():void;		
+		
+		function ignore():void;
+
 	}
 }

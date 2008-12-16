@@ -62,12 +62,17 @@ package com.vivisectingmedia.framework.controllers
 		public function addTask(task:ITask):void
 		{
 			// apply overrides
-			applyOverrides(task.taskOverrides);
+			// if overrides dont override this task add task
+			if(applyOverrides(task)) { 
 			
-			// determine priority and placement
-			task.inQueue();
-			taskQueue.addItem(task, task.priority);
-			
+				// determine priority and placement
+				task.inQueue();
+				taskQueue.addItem(task, task.priority);
+			}
+			else {
+				// Trigger Ignore on task
+				task.ignore();
+			}
 			// call next, to check queue state
 			next();
 		}
@@ -77,25 +82,68 @@ package com.vivisectingmedia.framework.controllers
 		}
 		
 		/**
+		 * <p>
 		 * Used to find and remove any tasks in the current
 		 * queue that are overriden by a new task that has been
-		 * added to the controller.
+		 * added to the controller. This includes those tasks that are active.
+		 * </p>
+		 * <p>
+		 * If the new task is selfOverriding two scenarios will play out.
 		 * 
-		 * @param overrides List of task types to find and removed.
+		 * <ul>
+		 * 	<li>If new task has same type and a different uid as a task in the queue or active queue the existing task is removed and canceled, the new task is then added to the queue.</li>
+		 *  <li>If new task has same type and the same uid as a queued or active task, the new task is ignored and not added to they system.</li>
+		 * </ul>
+		 * </p>
+		 * @param newTask New Task to be added to queue
 		 * 
+		 * @return Boolean True if newTasks overrides were processed,otherwise false
 		 */
-		protected function applyOverrides(overrides:Array):void
+		protected function applyOverrides(newTask:ITask):Boolean
 		{
-			if(overrides.length < 1) return; // no overrides
+			var overrides:Array = newTask.taskOverrides;
+			
+			//// no overrides and no not selfoverriding
+			if(overrides.length < 1 && !newTask.selfOverride) return true; 
 			
 			// loop over and find all the matched type
-			var newList:PriorityQueue = new PriorityQueue();
+			var newList:Array = new Array();
 			var len:int = overrides.length;		
-			var itemList:Array = taskQueue.items;
-				
-			for each(var task:ITask in itemList)
+			var match:Boolean;
+			
+			var itemList:Array = taskQueue.items.concat(activeTasks.getAllKeys());
+			
+			// Handle self override 
+			// Loop over all tasks looking for self override
+			if(newTask.selfOverride) {
+				for each(var task:ITask in itemList)
+				{
+					match = false;
+					if(!match && newTask.selfOverride && newTask.type == task.type) {
+						// Already one in the queue with same type and uid, disregard new task
+						if(newTask.uid == task.uid) {
+							return false;
+							
+							// Only add task that are not active
+							if(!activeTasks.containsItem(task)) {
+								newList.push(task);
+							}
+						}
+						else {
+							// Found a match, cancel it
+							if(task is ITask) ITask(task).cancel();
+						}
+					}
+				}	
+			}
+			// Set new itemList after removing selfoverrides, reset newList
+			itemList = newList
+			newList = new Array();
+			
+			// Task overrides - only if new task is not disregarded based on selfoverrides
+			for each(task in itemList)
 			{
-				var match:Boolean = false;
+				match = false;
 				for(var i:uint = 0; i < len; i++) 
 				{ 
 					if(task.type == overrides[i]) 
@@ -105,11 +153,21 @@ package com.vivisectingmedia.framework.controllers
 						if(task is ITask) ITask(task).cancel();
 					}
 				}
-				if(!match) newList.addItem(task, task.priority);
+				// Only add task that are not active
+					if(!match && !activeTasks.containsItem(task)) {
+						newList.push(task);
+					}
 			}
-			
 			// update to the stripped list
-			taskQueue = newList;
+			
+			var newTaskQueue:PriorityQueue = new PriorityQueue();
+			
+			for each(task in newList) {
+				newTaskQueue.addItem(task, task.priority);
+			}
+			taskQueue = newTaskQueue;
+			
+			return true;
 		}
 		
 		protected function next():void
@@ -134,12 +192,21 @@ package com.vivisectingmedia.framework.controllers
 				var task:ITask;
 				if(nextTask is ITaskGroup)
 				{
+					// If no more tasks are in the group,pop group from queue
+					// and call next and return;
+					if(!ITaskGroup(nextTask).hasTask) { 
+						taskQueue.next();
+						this.next();	
+						return;
+					}
+					
 					// Mark group as in queue
-					nextTask.inQueue();
+					if(nextTask.phase != TaskEvent.TASK_START) {
+						nextTask.start();
+					}
 					
 					task = ITaskGroup(nextTask).next();
-					// If no more tasks are in the group,pop group from queue
-					if(!ITaskGroup(nextTask).hasTask) taskQueue.next();
+					
 					
 				} else {
 					task = ITask(taskQueue.next());

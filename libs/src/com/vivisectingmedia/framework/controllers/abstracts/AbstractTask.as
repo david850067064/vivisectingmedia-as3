@@ -55,14 +55,19 @@ package com.vivisectingmedia.framework.controllers.abstracts
 		/* PRIVATE PROPERTIES */
 		private var __type:String;
 		private var __priority:int;
+		private var __selfOverride:Boolean;
+		private var __uid:Object;
 		
-		public function AbstractTask(type:String, priority:int = 5)
+		public function AbstractTask(type:String, priority:int = 5, uid:Object = null, selfOverride:Boolean = false)
 		{
 			super(this);
 			
 			// set properties
 			__type = type;
 			__priority = priority;
+			__uid = uid;
+			__selfOverride = selfOverride;
+			
 			currentOverrides = new Array();
 			currentPhase = TASK_CREATED;
 		}
@@ -93,7 +98,14 @@ package com.vivisectingmedia.framework.controllers.abstracts
 		}
 		
 		public function get uid():Object {
-			return null;
+			return __uid;
+		}
+		
+		public function get selfOverride():Boolean {
+			return __selfOverride;
+		}
+		public function set selfOverride(value:Boolean):void {
+			__selfOverride = value;
 		}
 		public function start():void
 		{
@@ -123,6 +135,12 @@ package com.vivisectingmedia.framework.controllers.abstracts
 		{
 			currentPhase = TaskEvent.TASK_WAITING_FOR_READY;
 			dispatchEvent(new TaskEvent(TaskEvent.TASK_WAITING_FOR_READY));
+		}
+		
+		public function ignore():void
+		{
+			currentPhase = TaskEvent.TASK_IGNORED;
+			dispatchEvent(new TaskEvent(TaskEvent.TASK_IGNORED));
 		}
 				
 	}

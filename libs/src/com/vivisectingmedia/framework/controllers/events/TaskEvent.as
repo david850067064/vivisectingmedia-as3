@@ -36,6 +36,7 @@ package com.vivisectingmedia.framework.controllers.events
 		static public const TASK_PAUSE:String = "TASK_PAUSE";
 		static public const TASK_CANCEL:String = "TASK_CANCEL";
 		static public const TASK_ERROR:String = "TASK_ERROR";
+		static public const TASK_IGNORED:String = "TASK_IGNORED"
 		
 		public function TaskEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
 		{

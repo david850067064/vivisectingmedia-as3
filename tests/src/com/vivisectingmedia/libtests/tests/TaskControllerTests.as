@@ -25,6 +25,7 @@
  package com.vivisectingmedia.libtests.tests
 {
 	import com.vivisectingmedia.framework.controllers.TaskController;
+	import com.vivisectingmedia.framework.controllers.abstracts.AbstractTask;
 	import com.vivisectingmedia.framework.controllers.events.TaskEvent;
 	import com.vivisectingmedia.framework.controllers.interfaces.ITask;
 	import com.vivisectingmedia.framework.datastructures.tasks.TaskGroup;
@@ -228,49 +229,183 @@
 		 }
 		 public function testGroupInQueue():void {
 		 	var taskGroup:TaskGroup = new TaskGroup("TASKGROUP",0);
+		 	var taskGroupQueued:TaskGroup = new TaskGroup("Another",0);
 		 	
 		 	var task0ToGroup:TestTaskPriority0 = new TestTaskPriority0();
 		 	var task1ToGroup:TestTaskPriority1 = new TestTaskPriority1();
-		 	var task2NotInGroup:TestTaskPriority2 = new TestTaskPriority2();
+		 	var task2InGroup2:TestTaskPriority2 = new TestTaskPriority2();
 		 	
 		 	// Add Two tasks to group
 		 	taskGroup.addTask(task0ToGroup);
 		 	taskGroup.addTask(task1ToGroup);
-		 	
+		 	// Add one task to second group
+		 	taskGroupQueued.addTask(task2InGroup2);
 		 	// Verify group is marked as InQueue
-		 	taskGroup.addEventListener(TaskEvent.TASK_QUEUED, addAsync(handleTaskQueued,500),false, 0,true);
+		 	taskGroupQueued.addEventListener(TaskEvent.TASK_QUEUED, addAsync(handleTaskQueued,500),false, 0,true);
 		 	// Add Group controller
 		 	controller.addTaskGroup(taskGroup);
+		 	controller.addTaskGroup(taskGroupQueued);
 		 }
 		 
 		 /**
 		 * Test verifies the override capabilities of a Group
-		 * when both groups are of the same type and Id
+		 * when both groups are of the same type and Id. New Group should not be added
 		 */
 		 public function testTaskGroupOverrideWithSameTypesSameId():void {
+		 	var taskGroup:TaskGroup = new TaskGroup("SAME_GROUP", 0, 00000, true);
+		 	var taskGroupIgnore:TaskGroup = new TaskGroup("SAME_GROUP", 0, 00000, true);
 		 	
+		 	var task0:TestTaskPriority0 = new TestTaskPriority0();
+		 	var task1:TestTaskPriority1 = new TestTaskPriority1();
+		 	
+		 	// Add a task to each group
+		 	taskGroup.addTask(task0);
+		 	taskGroupIgnore.addTask(task1);
+		 	
+		 	// Verify  second group is ignored since both groups have same id and uid
+		 	taskGroupIgnore.addEventListener(TaskEvent.TASK_IGNORED, addAsync(handleTaskIgnore, 500),false,0,true);
+		 	// Add both groups to controller
+		 	controller.addTaskGroup(taskGroup);
+		 	controller.addTaskGroup(taskGroupIgnore);
 		 }
 		 /**
 		 * Test verifies the override capabilities of a Group
 		 * when both groups are of the same type and differnt Ids
 		 */
-		 public function testTaskGroupOverrideWithDifferentSameDifferentId():void {
+		 public function testTaskGroupOverrideWithSameTypeDifferentId():void {
+		 	var taskGroup1:TaskGroup = new TaskGroup("SAME_GROUP", 0, 00000, true);
+		 	var taskGroup2:TaskGroup = new TaskGroup("SAME_GROUP", 0, 99999, true);
 		 	
+		 	var task0:TestTaskPriority0 = new TestTaskPriority0();
+		 	var task1:TestTaskPriority1 = new TestTaskPriority1();
+		 	
+		 	// Add a task to each group
+		 	taskGroup1.addTask(task0);
+		 	taskGroup2.addTask(task1);
+		 	
+		 	// Add both groups to controller
+		 	controller.addTaskGroup(taskGroup1);
+		 	controller.addTaskGroup(taskGroup2);
+			
+			// Verify  First task group is canceled and second is started
+			assertTrue("First Task Group should be canceled", taskGroup1.phase == TaskEvent.TASK_CANCEL);
+			assertTrue("Second Task Group should be started", taskGroup2.phase == TaskEvent.TASK_START);
 		 }
 		 /**
 		 * Test verifies the override capabilities of a Group
 		 * when both groups are of the different type and s Ids
 		 */
 		 public function testTaskGroupOverrideWithDifferentTypesSameId():void {
+		 	var taskGroup1:TaskGroup = new TaskGroup("GROUP_1", 0, 00000, true);
+		 	var taskGroup2:TaskGroup = new TaskGroup("GrOUP_2", 0, 00000, true);
 		 	
+		 	var task0:TestTaskPriority0 = new TestTaskPriority0();
+		 	var task1:TestTaskPriority1 = new TestTaskPriority1();
+		 	
+		 	// Add a task to each group
+		 	taskGroup1.addTask(task0);
+		 	taskGroup2.addTask(task1);
+		 	
+		 	// Add both groups to controller
+		 	controller.addTaskGroup(taskGroup1);
+		 	controller.addTaskGroup(taskGroup2);
+			
+			// Verfiy first task is started and second is queued
+			assertTrue("First Task Group should be started", taskGroup1.phase == TaskEvent.TASK_START);
+			assertTrue("Second Task Group should be queued", taskGroup2.phase == TaskEvent.TASK_QUEUED);
 		 }
 		 /**
 		 * Test verifies the override capabilities of a Group
 		 * when both groups are of the different type and differnt Ids
 		 */
 		 public function testTaskGroupOverrideWithDifferentTypesDifferentId():void {
+		 	var taskGroup1:TaskGroup = new TaskGroup("GROUP_1", 0, 00000, true);
+		 	var taskGroup2:TaskGroup = new TaskGroup("GrOUP_2", 0, 99999, true);
 		 	
+		 	var task0:TestTaskPriority0 = new TestTaskPriority0();
+		 	var task1:TestTaskPriority1 = new TestTaskPriority1();
+		 	
+		 	// Add a task to each group
+		 	taskGroup1.addTask(task0);
+		 	taskGroup2.addTask(task1);
+		 	
+		 	// Add both groups to controller
+		 	controller.addTaskGroup(taskGroup1);
+		 	controller.addTaskGroup(taskGroup2);
+			
+			// Verfiy first task is started and second is queued
+			assertTrue("First Task Group should be started", taskGroup1.phase == TaskEvent.TASK_START);
+			assertTrue("Second Task Group should be queued", taskGroup2.phase == TaskEvent.TASK_QUEUED);
 		 }
+		 
+		 /**
+		 * Test verifies the override capabilities of a Task
+		 * when both tasks are of the same type and Id. New task should not be added
+		 */
+		 public function testTaskOverrideWithSameTypesSameId():void {
+		 	var task1:ITask = new AbstractTask("SAME_TYPE", 0, 11111,true);
+		 	var taskIgnore:ITask = new AbstractTask("SAME_TYPE", 0, 11111,true);
+		 	
+		 	// Add both tasks to controller
+		 	controller.addTask(task1);
+		 	controller.addTask(taskIgnore);
+		 	
+		 	// Verify second task is ignored since both tasks have same id and uid
+		 	taskIgnore.addEventListener(TaskEvent.TASK_IGNORED, addAsync(handleTaskIgnore, 500),false,0,true);
+		 	
+		 	// Add both tasks to controller
+		 	controller.addTask(task1);
+		 	controller.addTask(taskIgnore);
+		 }
+		 /**
+		 * Test verifies the override capabilities of a Task
+		 * when both tasks are of the same type and differnt Ids
+		 */
+		 public function testTaskOverrideWithSameTypeDifferentId():void {
+		 	var task1:ITask = new AbstractTask("SAME_TYPE", 0, 11111,true);
+		 	var task2:ITask = new AbstractTask("SAME_TYPE", 0, 99999,true);
+		 	
+		 	// Add both tasks to controller
+		 	controller.addTask(task1);
+		 	controller.addTask(task2);
+			
+			// Verify  First task is canceled and second is started
+			assertTrue("First Task should be canceled", task1.phase == TaskEvent.TASK_CANCEL);
+			assertTrue("Second Task should be started", task2.phase == TaskEvent.TASK_START);
+		 }
+		 /**
+		 * Test verifies the override capabilities of a Task
+		 * when both tasks are of the different type and s Ids
+		 */
+		 public function testTaskOverrideWithDifferentTypesSameId():void {
+		 	var task1:ITask = new AbstractTask("SAME_TYPE", 0, 11111,true);
+		 	var task2:ITask = new AbstractTask("DIFFERNT_TYPE", 0, 11111,true);
+		 	
+		 	// Add both tasks to controller
+		 	controller.addTask(task1);
+		 	controller.addTask(task2);
+			
+			// Verfiy first task is started and second is queued
+			assertTrue("First Task should be started", task1.phase == TaskEvent.TASK_START);
+			assertTrue("Second Task should be queued", task2.phase == TaskEvent.TASK_QUEUED);
+		 }
+		 /**
+		 * Test verifies the override capabilities of a Task
+		 * when both tasks are of the different type and differnt Ids
+		 */
+		 public function testTaskOverrideWithDifferentTypesDifferentId():void {
+		 	var task1:ITask = new AbstractTask("SAME_TYPE", 0, 11111,true);
+		 	var task2:ITask = new AbstractTask("DIFFERNT_TYPE", 0, 99999,true);
+		 	
+		 	// Add both tasks to controller
+		 	controller.addTask(task1);
+		 	controller.addTask(task2);
+			
+			// Verfiy first task is started and second is queued
+			assertTrue("First Task should be started", task1.phase == TaskEvent.TASK_START);
+			assertTrue("Second Task should be queued", task2.phase == TaskEvent.TASK_QUEUED);
+		 }
+		 
 		// test specific handlers
 		// generic handlers for task event
 		protected function handleTaskQueued(event:TaskEvent):void
@@ -298,5 +433,12 @@
 			var currentTask:ITask = ITask(event.currentTarget);
 			assertTrue("The task's phase was not set to cancel.", currentTask.phase == TaskEvent.TASK_CANCEL);
 		}
+		protected function handleTaskIgnore(event:TaskEvent):void
+		{
+			// verify the current phase is set
+			var currentTask:ITask = ITask(event.currentTarget);
+			assertTrue("The task's phase was not set to ignore.", currentTask.phase == TaskEvent.TASK_IGNORED);
+		}
+		
 	}
 }
