@@ -121,7 +121,7 @@
 		 	
 			task1.addEventListener(TaskEvent.TASK_START, addAsync(handleTaskStart,500),false, 0,true);
 			taskGroup.addTask(task1);
-			controller.addTaskGroup(taskGroup);
+			controller.addTask(taskGroup);
 		 }
 		 
 		 /**
@@ -138,7 +138,7 @@
 			taskGroup.addTask(task0);
 			taskGroup.addTask(task1);
 
-			controller.addTaskGroup(taskGroup);
+			controller.addTask(taskGroup);
 			task0.triggerComplete();
 		 }
 		 
@@ -151,7 +151,7 @@
 			// Add task to group
 			taskGroup.addTask(task0);
 			// Add group to controller
-			controller.addTaskGroup(taskGroup);
+			controller.addTask(taskGroup);
 			// Remove task from group
 			taskGroup.removeTask(task0);
 			// Verify task is removed from group
@@ -175,7 +175,7 @@
 			taskGroup.addTask(task1);
 			taskGroup.addTask(task2);			
 			// Add group to controller
-			controller.addTaskGroup(taskGroup);
+			controller.addTask(taskGroup);
 			// Remove Second item
 			taskGroup.removeTask(task1);
 			// Mark first task as complete, third task should start
@@ -217,7 +217,7 @@
 		 	taskGroup.addTask(task1ToGroup);
 		 	
 		 	// Add Group controller
-		 	controller.addTaskGroup(taskGroup);
+		 	controller.addTask(taskGroup);
 		 	// Add task to controller
 		 	controller.addTask(task2NotInGroup);
 		 	
@@ -243,8 +243,8 @@
 		 	// Verify group is marked as InQueue
 		 	taskGroupQueued.addEventListener(TaskEvent.TASK_QUEUED, addAsync(handleTaskQueued,500),false, 0,true);
 		 	// Add Group controller
-		 	controller.addTaskGroup(taskGroup);
-		 	controller.addTaskGroup(taskGroupQueued);
+		 	controller.addTask(taskGroup);
+		 	controller.addTask(taskGroupQueued);
 		 }
 		 
 		 /**
@@ -265,8 +265,8 @@
 		 	// Verify  second group is ignored since both groups have same id and uid
 		 	taskGroupIgnore.addEventListener(TaskEvent.TASK_IGNORED, addAsync(handleTaskIgnore, 500),false,0,true);
 		 	// Add both groups to controller
-		 	controller.addTaskGroup(taskGroup);
-		 	controller.addTaskGroup(taskGroupIgnore);
+		 	controller.addTask(taskGroup);
+		 	controller.addTask(taskGroupIgnore);
 		 }
 		 /**
 		 * Test verifies the override capabilities of a Group
@@ -284,8 +284,8 @@
 		 	taskGroup2.addTask(task1);
 		 	
 		 	// Add both groups to controller
-		 	controller.addTaskGroup(taskGroup1);
-		 	controller.addTaskGroup(taskGroup2);
+		 	controller.addTask(taskGroup1);
+		 	controller.addTask(taskGroup2);
 			
 			// Verify  First task group is complete and second is started
 			assertTrue("First Task Group should be complete", taskGroup1.phase == TaskEvent.TASK_COMPLETE);
@@ -307,8 +307,8 @@
 		 	taskGroup2.addTask(task1);
 		 	
 		 	// Add both groups to controller
-		 	controller.addTaskGroup(taskGroup1);
-		 	controller.addTaskGroup(taskGroup2);
+		 	controller.addTask(taskGroup1);
+		 	controller.addTask(taskGroup2);
 			
 			// Verfiy first task is started and second is queued
 			assertTrue("First Task Group should be started", taskGroup1.phase == TaskEvent.TASK_START);
@@ -330,8 +330,8 @@
 		 	taskGroup2.addTask(task1);
 		 	
 		 	// Add both groups to controller
-		 	controller.addTaskGroup(taskGroup1);
-		 	controller.addTaskGroup(taskGroup2);
+		 	controller.addTask(taskGroup1);
+		 	controller.addTask(taskGroup2);
 			
 			// Verfiy first task is started and second is queued
 			assertTrue("First Task Group should be started", taskGroup1.phase == TaskEvent.TASK_START);
