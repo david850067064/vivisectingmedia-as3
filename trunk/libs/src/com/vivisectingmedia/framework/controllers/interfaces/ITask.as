@@ -40,6 +40,8 @@ package com.vivisectingmedia.framework.controllers.interfaces
 		
 		function get uid():Object;
 		
+		function get isBlocker():Boolean;
+		
 		function get selfOverride():Boolean;
 		
 		function set selfOverride(valu:Boolean):void;

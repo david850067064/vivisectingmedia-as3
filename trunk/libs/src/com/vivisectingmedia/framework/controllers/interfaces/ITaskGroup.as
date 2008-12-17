@@ -26,7 +26,7 @@ package com.vivisectingmedia.framework.controllers.interfaces
 {
 	import flash.events.IEventDispatcher;
 
-	public interface ITaskGroup extends IEventDispatcher, ITask
+	public interface ITaskGroup extends ITask
 	{
 		function get hasTask():Boolean
 		

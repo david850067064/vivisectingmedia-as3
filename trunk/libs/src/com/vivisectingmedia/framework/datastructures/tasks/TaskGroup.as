@@ -83,6 +83,7 @@ package com.vivisectingmedia.framework.datastructures.tasks
 		private var __priority:int;
 		private var __uid:Object;
 		private var __selfOverride:Boolean;
+		private var __isBlocker:Boolean;
 		
 		/**
 		 * Constructor.  Sets the groups type and priority.
@@ -93,7 +94,7 @@ package com.vivisectingmedia.framework.datastructures.tasks
 		 * @param selfOverride Boolean indicating if the TaskGroup can override other TaskGroups of the same type with same uid. Default false
 		 * 
 		 */
-		public function TaskGroup(type:String, priority:int = 5, uid:Object = null, selfOverride:Boolean = false)
+		public function TaskGroup(type:String, priority:int = 5, uid:Object = null, selfOverride:Boolean = false, blocking:Boolean = false)
 		{
 			super(this);
 			
@@ -105,6 +106,7 @@ package com.vivisectingmedia.framework.datastructures.tasks
 			__priority = priority;
 			__uid = uid;
 			__selfOverride = selfOverride
+			__isBlocker = blocking;
 		}
 		
 		/**
@@ -119,6 +121,20 @@ package com.vivisectingmedia.framework.datastructures.tasks
 		public function get type():String
 		{
 			return __type;
+		}
+		
+		/**
+		 * Determines if the TaskGroup blocks all other items
+		 * in the TaskController.  If the TaskGroup is set as
+		 * a blocking task, the controller will load no more
+		 * items from the queue until this group is complete,
+		 * cancelled or errors. The default is false.
+		 *  
+		 * @return True if the group blocks, false if it does not.
+		 * 
+		 */
+		public function get isBlocker():Boolean {
+			return __isBlocker;
 		}
 		
 		/**
@@ -201,11 +217,13 @@ package com.vivisectingmedia.framework.datastructures.tasks
 			if(applyOverrides(task)) { 
 				// Determine priority and placement
 				taskQueue.addItem(task, task.priority);
+				// mark task as queued
+				task.inQueue();
 			}
 			else {
 				// Trigger ignore on task
 				task.ignore();
-			}
+			}			
 		}
 		
 		/**
