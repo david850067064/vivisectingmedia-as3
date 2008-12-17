@@ -399,6 +399,8 @@ package com.vivisectingmedia.framework.datastructures.tasks
 			// Listen for complete or cancel events
 			task.addEventListener(TaskEvent.TASK_COMPLETE, handleTaskEvent);
 			task.addEventListener(TaskEvent.TASK_CANCEL, handleTaskEvent);
+			task.addEventListener(TaskEvent.TASK_ERROR, handleTaskEvent);
+			
 			return task;
 		}
 		
@@ -487,7 +489,7 @@ package com.vivisectingmedia.framework.datastructures.tasks
 		}
 
 		/**
-		 * Method handles group tasks that have been completed.
+		 * Method handles group tasks that have been completed, cancel or errored.
 		 * If the no more tasks are in queue, a complete event is dispatched.
 		 * 
 		 * @param event
@@ -495,14 +497,37 @@ package com.vivisectingmedia.framework.datastructures.tasks
 		protected function handleTaskEvent(event:TaskEvent):void
 		{
 			var task:ITask = ITask(event.currentTarget);
+			
+			// Remove listner for complete, cancel, error events
+			task.removeEventListener(TaskEvent.TASK_COMPLETE, handleTaskEvent);
+			task.removeEventListener(TaskEvent.TASK_CANCEL, handleTaskEvent);
+			task.removeEventListener(TaskEvent.TASK_ERROR, handleTaskEvent);
+			
 			switch(event.type)
 			{
 				case TaskEvent.TASK_COMPLETE:
+				case TaskEvent.TASK_CANCEL:
 					if(!this.taskQueue.hasItems) {
-						currentPhase = TaskEvent.TASK_COMPLETE;
-						dispatchEvent(new TaskEvent(TaskEvent.TASK_COMPLETE));
+						var stillActives:Boolean;
+						// Loop through all proccessed tasks and verify they are either complete or canceled
+						for each(var proccessed:ITask in this.processedQueue.items) {
+							if(proccessed.phase != TaskEvent.TASK_CANCEL && proccessed.phase != TaskEvent.TASK_COMPLETE) {
+								stillActives = true;
+							}
+ 						}
+ 						// If no actives dispatch complete
+ 						if(!stillActives) {
+							currentPhase = TaskEvent.TASK_COMPLETE;
+							dispatchEvent(new TaskEvent(TaskEvent.TASK_COMPLETE));
+ 						}
 					}
-				break;
+				break
+				
+				case TaskEvent.TASK_ERROR: 
+					currentPhase = TaskEvent.TASK_ERROR;
+					dispatchEvent(new TaskEvent(TaskEvent.TASK_ERROR));
+				
+				break
 				
 			}
 		}

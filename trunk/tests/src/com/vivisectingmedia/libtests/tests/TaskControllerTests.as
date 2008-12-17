@@ -287,8 +287,8 @@
 		 	controller.addTaskGroup(taskGroup1);
 		 	controller.addTaskGroup(taskGroup2);
 			
-			// Verify  First task group is canceled and second is started
-			assertTrue("First Task Group should be canceled", taskGroup1.phase == TaskEvent.TASK_CANCEL);
+			// Verify  First task group is complete and second is started
+			assertTrue("First Task Group should be complete", taskGroup1.phase == TaskEvent.TASK_COMPLETE);
 			assertTrue("Second Task Group should be started", taskGroup2.phase == TaskEvent.TASK_START);
 		 }
 		 /**
@@ -405,6 +405,23 @@
 			assertTrue("First Task should be started", task1.phase == TaskEvent.TASK_START);
 			assertTrue("Second Task should be queued", task2.phase == TaskEvent.TASK_QUEUED);
 		 }
+		 
+		 public function testTaskError():void {
+		 	var task1:TestTask = new TestTask();
+		 	var task2:TestTask = new TestTask();
+		 	
+			// Add tasks to controller
+			controller.addTask(task1);
+			controller.addTask(task2);
+			
+			// Trigger error
+			task1.triggerError();
+			
+			// Verify first task has errored and second has started in queue
+			assertTrue("First task should be errored", task1.phase == TaskEvent.TASK_ERROR);		 
+			assertTrue("Second task should be started", task2.phase == TaskEvent.TASK_START);
+		 }
+		 
 		 
 		// test specific handlers
 		// generic handlers for task event

@@ -219,6 +219,7 @@ package com.vivisectingmedia.framework.controllers
 					// start the task and add it to the active task list
 					task.addEventListener(TaskEvent.TASK_COMPLETE, handleTaskEvent);
 					task.addEventListener(TaskEvent.TASK_CANCEL, handleTaskEvent);
+					task.addEventListener(TaskEvent.TASK_ERROR, handleTaskEvent);
 					task.start();
 					activeTasks.addItem(task, true);
 				} else {
@@ -238,10 +239,12 @@ package com.vivisectingmedia.framework.controllers
 			{
 				case TaskEvent.TASK_CANCEL:
 				case TaskEvent.TASK_COMPLETE:
+				case TaskEvent.TASK_ERROR:
 					// remove from the active queue
 					activeTasks.remove(task);
 					task.removeEventListener(TaskEvent.TASK_COMPLETE, handleTaskEvent);
 					task.removeEventListener(TaskEvent.TASK_CANCEL, handleTaskEvent);
+					task.removeEventListener(TaskEvent.TASK_ERROR, handleTaskEvent);
 					next();
 				break;
 				

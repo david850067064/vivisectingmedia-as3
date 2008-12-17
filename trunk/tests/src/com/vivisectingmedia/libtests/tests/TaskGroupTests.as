@@ -296,6 +296,7 @@ package com.vivisectingmedia.libtests.tests
 			
 			taskGroup.addTask(task0);
 			taskGroup.addTask(task1);
+			
 			// Listen for Task Group Complete Event
 			taskGroup.addEventListener(TaskEvent.TASK_COMPLETE, addAsync(handleTaskComplete,500),false, 0,true);
 		 	
