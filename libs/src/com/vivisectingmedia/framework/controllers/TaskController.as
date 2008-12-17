@@ -77,10 +77,6 @@ package com.vivisectingmedia.framework.controllers
 			next();
 		}
 		
-		public function addTaskGroup(group:ITaskGroup):void {
-			addTask(group);
-		}
-		
 		/**
 		 * <p>
 		 * Used to find and remove any tasks in the current

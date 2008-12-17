@@ -190,6 +190,16 @@ package com.vivisectingmedia.framework.controllers
 		{
 			return instance.inst_generateNewId();
 		}
+
+		/**
+		 * Method returns an array of all currently selected items in the specified group.
+		 * 
+		 * @param Unique group id.
+		 * @return An Array containing all items currently selected.
+		 */
+		static public function getSelected(groupId:int):Array {
+			return instance.inst_getSelected(groupId);
+		}
 		
 		/* STATIC PRIVATE METHODS */
 		static private function get instance():SelectionController
@@ -385,6 +395,26 @@ package com.vivisectingmedia.framework.controllers
 			_groupTable.remove(groupId);
 		}
 		
+		/**
+		 * Method called by the public facade method getSelected(). 
+		 * @param groupId
+		 * 
+		 */
+		private function inst_getSelected(groupId:int):Array {
+			var selected:Array = new Array();
+			if(!_groupTable.containsKey(groupId)) return selected;
+			
+				var itemList:Array = _groupTable.getItem(groupId) as Array;
+				// find the item, remove it from the itemTable
+				for(var i:uint = 0; i < itemList.length; i++)
+				{
+					if((ISelectable(itemList[i])).selected) {
+						selected.push(ISelectable(itemList[i]));
+					};
+				}
+				return selected;
+		}
+				
 		/**
 		 * Method called by the public facade method clearAllGroups();
 		 * 
