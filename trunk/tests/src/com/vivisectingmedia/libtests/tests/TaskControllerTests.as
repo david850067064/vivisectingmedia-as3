@@ -616,6 +616,30 @@
 		 	assertTrue("Task3 phase was not set to start.", task3.phase == TaskEvent.TASK_START);
 		}		
 		 
+		 
+		public function testTaskGroupTaskPriority():void {
+			var taskGroup:TaskGroup = new TaskGroup("BLAH", 3);
+			
+			var groupTask1:TestTask = new TestTask();
+			var groupTask2:TestTask = new TestTask();
+			var groupTask3:TestTask = new TestTask();
+			
+			var taskHighPriority:TestTask = new TestTaskPriority1();
+			
+			
+			taskGroup.addTask(groupTask1);
+			taskGroup.addTask(groupTask2);
+			taskGroup.addTask(groupTask3);
+			
+			controller.addTask(taskGroup);
+			controller.addTask(taskHighPriority);
+			
+			
+			groupTask1.triggerComplete();	
+			groupTask2.triggerComplete();
+			
+			assertTrue("Third group task should have started", groupTask3.phase == TaskEvent.TASK_START);
+		}
 		// test specific handlers
 		// generic handlers for task event
 		protected function handleTaskQueued(event:TaskEvent):void

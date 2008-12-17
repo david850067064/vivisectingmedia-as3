@@ -105,7 +105,6 @@ package com.vivisectingmedia.framework.controllers
 			
 			// loop over and find all the matched type
 			var newList:Array = new Array();
-			var len:int = overrides.length;		
 			var match:Boolean;
 			
 			var itemList:Array = taskQueue.items.concat(activeTasks.getAllKeys());
@@ -113,30 +112,31 @@ package com.vivisectingmedia.framework.controllers
 			// Handle self override 
 			// Loop over all tasks looking for self override
 			if(newTask.selfOverride) {
+				match = false;
 				for each(var task:ITask in itemList)
 				{
-					match = false;
-					if(!match && newTask.selfOverride && newTask.type == task.type) {
+					if(newTask.type == task.type) {
 						// Already one in the queue with same type and uid, disregard new task
 						if(newTask.uid == task.uid) {
 							return false;
-							
-							// Only add task that are not active
-							if(!activeTasks.containsItem(task)) {
-								newList.push(task);
-							}
 						}
 						else {
 							// Found a match, cancel it
 							if(task is ITask) ITask(task).cancel();
 						}
 					}
+					// Only add task that are not active
+					else if(!activeTasks.containsKey(task)) {
+						newList.push(task);
+						match = true;
+					}
 				}	
 			}
 			// Set new itemList after removing selfoverrides, reset newList
-			itemList = newList
+			itemList = (match) ? newList : itemList;
 			newList = new Array();
 			
+			var len:int = overrides.length;	
 			// Task overrides - only if new task is not disregarded based on selfoverrides
 			for each(task in itemList)
 			{
@@ -151,7 +151,7 @@ package com.vivisectingmedia.framework.controllers
 					}
 				}
 				// Only add task that are not active
-					if(!match && !activeTasks.containsItem(task)) {
+					if(!match && !activeTasks.containsKey(task)) {
 						newList.push(task);
 					}
 			}
