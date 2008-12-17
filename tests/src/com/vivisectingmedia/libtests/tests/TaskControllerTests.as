@@ -76,6 +76,7 @@
 		 */		
 		public function testAddTaskTestQueued():void
 		{
+			controller.activeTaskLimit = 1; // set to one for this test
 			var task:TestTask = new TestTask();
 			task.addEventListener(TaskEvent.TASK_QUEUED, addAsync(handleTaskQueued, 100), false, 0, true);
 			
@@ -228,6 +229,7 @@
 		 	taskGroup.cancel();
 		 }
 		 public function testGroupInQueue():void {
+		 	controller.activeTaskLimit = 1; // set to one for this test
 		 	var taskGroup:TaskGroup = new TaskGroup("TASKGROUP",0);
 		 	var taskGroupQueued:TaskGroup = new TaskGroup("Another",0);
 		 	
@@ -252,6 +254,7 @@
 		 * when both groups are of the same type and Id. New Group should not be added
 		 */
 		 public function testTaskGroupOverrideWithSameTypesSameId():void {
+		 	controller.activeTaskLimit = 1; // set to one for this test
 		 	var taskGroup:TaskGroup = new TaskGroup("SAME_GROUP", 0, 00000, true);
 		 	var taskGroupIgnore:TaskGroup = new TaskGroup("SAME_GROUP", 0, 00000, true);
 		 	
@@ -273,6 +276,7 @@
 		 * when both groups are of the same type and differnt Ids
 		 */
 		 public function testTaskGroupOverrideWithSameTypeDifferentId():void {
+		 	controller.activeTaskLimit = 1; // set to one for this test
 		 	var taskGroup1:TaskGroup = new TaskGroup("SAME_GROUP", 0, 00000, true);
 		 	var taskGroup2:TaskGroup = new TaskGroup("SAME_GROUP", 0, 99999, true);
 		 	
@@ -296,6 +300,7 @@
 		 * when both groups are of the different type and s Ids
 		 */
 		 public function testTaskGroupOverrideWithDifferentTypesSameId():void {
+		 	controller.activeTaskLimit = 1; // set to one for this test
 		 	var taskGroup1:TaskGroup = new TaskGroup("GROUP_1", 0, 00000, true);
 		 	var taskGroup2:TaskGroup = new TaskGroup("GrOUP_2", 0, 00000, true);
 		 	
@@ -319,6 +324,7 @@
 		 * when both groups are of the different type and differnt Ids
 		 */
 		 public function testTaskGroupOverrideWithDifferentTypesDifferentId():void {
+		 	controller.activeTaskLimit = 1; // set to one for this test
 		 	var taskGroup1:TaskGroup = new TaskGroup("GROUP_1", 0, 00000, true);
 		 	var taskGroup2:TaskGroup = new TaskGroup("GrOUP_2", 0, 99999, true);
 		 	
@@ -343,6 +349,7 @@
 		 * when both tasks are of the same type and Id. New task should not be added
 		 */
 		 public function testTaskOverrideWithSameTypesSameId():void {
+		 	controller.activeTaskLimit = 1; // set to one for this test
 		 	var task1:ITask = new AbstractTask("SAME_TYPE", 0, 11111,true);
 		 	var taskIgnore:ITask = new AbstractTask("SAME_TYPE", 0, 11111,true);
 		 	
@@ -362,6 +369,7 @@
 		 * when both tasks are of the same type and differnt Ids
 		 */
 		 public function testTaskOverrideWithSameTypeDifferentId():void {
+		 	controller.activeTaskLimit = 1; // set to one for this test
 		 	var task1:ITask = new AbstractTask("SAME_TYPE", 0, 11111,true);
 		 	var task2:ITask = new AbstractTask("SAME_TYPE", 0, 99999,true);
 		 	
@@ -378,6 +386,7 @@
 		 * when both tasks are of the different type and s Ids
 		 */
 		 public function testTaskOverrideWithDifferentTypesSameId():void {
+		 	controller.activeTaskLimit = 1; // set to one for this test
 		 	var task1:ITask = new AbstractTask("SAME_TYPE", 0, 11111,true);
 		 	var task2:ITask = new AbstractTask("DIFFERNT_TYPE", 0, 11111,true);
 		 	
@@ -394,6 +403,7 @@
 		 * when both tasks are of the different type and differnt Ids
 		 */
 		 public function testTaskOverrideWithDifferentTypesDifferentId():void {
+		 	controller.activeTaskLimit = 1; // set to one for this test
 		 	var task1:ITask = new AbstractTask("SAME_TYPE", 0, 11111,true);
 		 	var task2:ITask = new AbstractTask("DIFFERNT_TYPE", 0, 99999,true);
 		 	
@@ -407,6 +417,7 @@
 		 }
 		 
 		 public function testTaskError():void {
+		 	controller.activeTaskLimit = 1; // set to one for this test
 		 	var task1:TestTask = new TestTask();
 		 	var task2:TestTask = new TestTask();
 		 	
@@ -422,6 +433,188 @@
 			assertTrue("Second task should be started", task2.phase == TaskEvent.TASK_START);
 		 }
 		 
+		 /**
+		  * This test verifies that adding a blocking task does block
+		  * any other task that are added to the queue.  The default queue count
+		  * is two concurrent items so this test should verify that the concurrent
+		  * items are held empty until complete. 
+		  * 
+		  */
+		 public function testTaskBlocking():void {
+		 	var blockingTask:TestTask = new TestTask(TestTask.BLOCKING_TASK);
+		 	var task1:TestTask = new TestTask();
+		 	var task2:TestTask = new TestTask();
+		 	
+		 	// add the task
+		 	controller.addTask(blockingTask);
+		 	controller.addTask(task1);
+		 	controller.addTask(task2);
+		 	
+		 	// verify that task1 one is queued and not started
+		 	assertTrue("Task1 phase was not set to queued.", task1.phase == TaskEvent.TASK_QUEUED);
+		 	assertTrue("Task2 phase was not set to queued.", task2.phase == TaskEvent.TASK_QUEUED);
+		 	
+		 	// complete the blocker and make sure 1 and two are active.
+		 	blockingTask.triggerComplete();
+		 	assertTrue("Task1 phase was not set to start.", task1.phase == TaskEvent.TASK_START);
+		 	assertTrue("Task2 phase was not set to start.", task2.phase == TaskEvent.TASK_START);
+		 }
+		 
+		 /**
+		  * verify that having more then one current item works for the queue. 
+		  * 
+		  */
+		 public function testConcurrentItemsComplete():void {
+		 	var task1:TestTask = new TestTask();
+		 	var task2:TestTask = new TestTask();
+		 	var task3:TestTask = new TestTask();
+		 	var task4:TestTask = new TestTask();
+		 	
+		 	// add the tasks
+		 	controller.addTask(task1);
+		 	controller.addTask(task2);
+		 	controller.addTask(task3);
+		 	controller.addTask(task4);
+		 	
+		 	// make sure the first two are active and the last two are not
+		 	assertTrue("Task1 phase was not set to start.", task1.phase == TaskEvent.TASK_START);
+		 	assertTrue("Task2 phase was not set to start.", task2.phase == TaskEvent.TASK_START);
+		 	assertTrue("Task3 phase was not set to queued.", task3.phase == TaskEvent.TASK_QUEUED);
+		 	assertTrue("Task4 phase was not set to queued.", task4.phase == TaskEvent.TASK_QUEUED);
+		 	
+		 	// complete the first task
+		 	task1.triggerComplete();
+		 	
+		 	// verify that 2 and 3 are active and 4 is not
+		 	assertTrue("Task2 phase was not set to start.", task2.phase == TaskEvent.TASK_START);
+		 	assertTrue("Task3 phase was not set to start.", task3.phase == TaskEvent.TASK_START);
+		 	assertTrue("Task4 phase was not set to queued.", task4.phase == TaskEvent.TASK_QUEUED);
+		 	
+		 	// complete the second task
+		 	task2.triggerComplete();
+		 	
+		 	// verify that 3 and 4 are active
+		 	assertTrue("Task4 phase was not set to start.", task4.phase == TaskEvent.TASK_START);
+		 	assertTrue("Task3 phase was not set to start.", task3.phase == TaskEvent.TASK_START);
+		 }
+		 
+		 /**
+		  * verify that having more then one current item works for the queue with errors 
+		  * 
+		  */
+		 public function testConcurrentItemsError():void {
+		 	var task1:TestTask = new TestTask();
+		 	var task2:TestTask = new TestTask();
+		 	var task3:TestTask = new TestTask();
+		 	var task4:TestTask = new TestTask();
+		 	
+		 	// add the tasks
+		 	controller.addTask(task1);
+		 	controller.addTask(task2);
+		 	controller.addTask(task3);
+		 	controller.addTask(task4);
+		 	
+		 	// make sure the first two are active and the last two are not
+		 	assertTrue("Task1 phase was not set to start.", task1.phase == TaskEvent.TASK_START);
+		 	assertTrue("Task2 phase was not set to start.", task2.phase == TaskEvent.TASK_START);
+		 	assertTrue("Task3 phase was not set to queued.", task3.phase == TaskEvent.TASK_QUEUED);
+		 	assertTrue("Task4 phase was not set to queued.", task4.phase == TaskEvent.TASK_QUEUED);
+		 	
+		 	// error the first task
+		 	task1.triggerError();
+		 	
+		 	// verify that 2 and 3 are active and 4 is not
+		 	assertTrue("Task2 phase was not set to start.", task2.phase == TaskEvent.TASK_START);
+		 	assertTrue("Task3 phase was not set to start.", task3.phase == TaskEvent.TASK_START);
+		 	assertTrue("Task4 phase was not set to queued.", task4.phase == TaskEvent.TASK_QUEUED);
+		 	
+		 	// error the second task
+		 	task2.triggerError();
+		 	
+		 	// verify that 3 and 4 are active
+		 	assertTrue("Task4 phase was not set to start.", task4.phase == TaskEvent.TASK_START);
+		 	assertTrue("Task3 phase was not set to start.", task3.phase == TaskEvent.TASK_START);
+		 }
+		 
+		 /**
+		  * verify that having more then one current item works for the queue with cancel 
+		  * 
+		  */
+		 public function testConcurrentItemsCancel():void {
+		 	var task1:TestTask = new TestTask();
+		 	var task2:TestTask = new TestTask();
+		 	var task3:TestTask = new TestTask();
+		 	var task4:TestTask = new TestTask();
+		 	
+		 	// add the tasks
+		 	controller.addTask(task1);
+		 	controller.addTask(task2);
+		 	controller.addTask(task3);
+		 	controller.addTask(task4);
+		 	
+		 	// make sure the first two are active and the last two are not
+		 	assertTrue("Task1 phase was not set to start.", task1.phase == TaskEvent.TASK_START);
+		 	assertTrue("Task2 phase was not set to start.", task2.phase == TaskEvent.TASK_START);
+		 	assertTrue("Task3 phase was not set to queued.", task3.phase == TaskEvent.TASK_QUEUED);
+		 	assertTrue("Task4 phase was not set to queued.", task4.phase == TaskEvent.TASK_QUEUED);
+		 	
+		 	// cancel the first task
+		 	task1.triggerCancel();
+		 	
+		 	// verify that 2 and 3 are active and 4 is not
+		 	assertTrue("Task2 phase was not set to start.", task2.phase == TaskEvent.TASK_START);
+		 	assertTrue("Task3 phase was not set to start.", task3.phase == TaskEvent.TASK_START);
+		 	assertTrue("Task4 phase was not set to queued.", task4.phase == TaskEvent.TASK_QUEUED);
+		 	
+		 	// error the second task
+		 	task2.triggerCancel();
+		 	
+		 	// verify that 3 and 4 are active
+		 	assertTrue("Task4 phase was not set to start.", task4.phase == TaskEvent.TASK_START);
+		 	assertTrue("Task3 phase was not set to start.", task3.phase == TaskEvent.TASK_START);
+		 }
+		 
+		/**
+		 * Verify that groups work with concurrent calls. 
+		 * 
+		 */
+		public function testConcurrentWithGroup():void {
+			var group:TaskGroup = new TaskGroup("test");
+			var task1:TestTask = new TestTask();
+		 	var task2:TestTask = new TestTask();
+		 	var task3:TestTask = new TestTask();
+		 	var task4:TestTask = new TestTask();
+		 	
+		 	// add 1 - 3 to group
+		 	group.addTask(task1);
+			group.addTask(task2);
+			group.addTask(task3);
+			
+			// add group and 4 to controller
+			controller.addTask(group);
+			controller.addTask(task4);
+			
+			// make sure the first two are active and the last two are not
+		 	assertTrue("Task1 phase was not set to start.", task1.phase == TaskEvent.TASK_START);
+		 	assertTrue("Task2 phase was not set to start.", task2.phase == TaskEvent.TASK_START);
+		 	assertTrue("Task3 phase was not set to queued.", task3.phase == TaskEvent.TASK_QUEUED);
+		 	assertTrue("Task4 phase was not set to queued.", task4.phase == TaskEvent.TASK_QUEUED);
+		 	
+		 	// complete the first task
+		 	task1.triggerComplete();
+		 	
+		 	// verify that 2 and 3 are active and 4 is not
+		 	assertTrue("Task2 phase was not set to start.", task2.phase == TaskEvent.TASK_START);
+		 	assertTrue("Task3 phase was not set to start.", task3.phase == TaskEvent.TASK_START);
+		 	assertTrue("Task4 phase was not set to queued.", task4.phase == TaskEvent.TASK_QUEUED);
+		 	
+		 	// complete the second task
+		 	task2.triggerComplete();
+		 	
+		 	// verify that 3 and 4 are active
+		 	assertTrue("Task4 phase was not set to start.", task4.phase == TaskEvent.TASK_START);
+		 	assertTrue("Task3 phase was not set to start.", task3.phase == TaskEvent.TASK_START);
+		}		
 		 
 		// test specific handlers
 		// generic handlers for task event
