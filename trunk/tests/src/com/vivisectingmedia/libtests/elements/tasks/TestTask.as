@@ -31,8 +31,10 @@ package com.vivisectingmedia.libtests.elements.tasks
 	{
 		static public const BASIC_TASK:String = "BASIC_TASK";
 		static public const NOT_READY:String = "NOT_READY";
+		static public const BLOCKING_TASK:String = "BLOCKING_TASK";
 		
 		protected var isReady:Boolean = true;
+		protected var isBlocked:Boolean = false;
 		
 		public function TestTask(type:String = BASIC_TASK, priority:int=5)
 		{
@@ -43,12 +45,20 @@ package com.vivisectingmedia.libtests.elements.tasks
 				case NOT_READY:
 					isReady = false;
 				break;
+				
+				case BLOCKING_TASK:
+					isBlocked = true;
+				break;
 			}
 		}
 		
 		override public function get ready():Boolean
 		{
 			return isReady;
+		}
+		
+		override public function get isBlocker():Boolean {
+			return isBlocked;
 		}
 		
 		public function triggerComplete():void
@@ -59,6 +69,11 @@ package com.vivisectingmedia.libtests.elements.tasks
 		public function triggerError():void
 		{
 			error();
+		}
+		
+		public function triggerCancel():void
+		{
+			cancel();
 		}
 		
 		public function triggerReady():void

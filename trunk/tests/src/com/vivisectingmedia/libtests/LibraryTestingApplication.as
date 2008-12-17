@@ -90,11 +90,10 @@ package com.vivisectingmedia.libtests
 			suite.addTest( TestUtils.generateFullSuite(AdjustableDateTests) );
 			suite.addTest( TestUtils.generateFullSuite(SingletonFactoryTest) );
 			suite.addTest( TestUtils.generateFullSuite(SelectionControllerTests) );
-			
-			suite.addTest( TestUtils.generateFullSuite(TaskControllerTests) );
 			suite.addTest(TestUtils.generateFullSuite(TaskGroupTests) );
 			suite.addTest( TestUtils.generateFullSuite(PriorityQueueTests) );
-			
+			//*/
+			suite.addTest( TestUtils.generateFullSuite(TaskControllerTests) );
 			
 			return suite;
 		}
