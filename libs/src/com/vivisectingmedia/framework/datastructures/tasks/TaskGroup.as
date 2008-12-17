@@ -259,30 +259,30 @@ package com.vivisectingmedia.framework.datastructures.tasks
 			// Handle self override
 			// Loop over all tasks looking for self override
 			if(newTask.selfOverride) {
+				match = false;
 				for each(var task:ITask in itemList)
 				{
-					// Reset match to not found
-					match = false;
-					
-					// If match not found and task is self overriding  and task types are the same
-					if(!match && newTask.selfOverride && newTask.type == task.type) {
+					// If match not found and task types are the same
+					if(newTask.type == task.type) {
 						// If tasks has same uid, mark the newTask so we dont keep it
 						if(newTask.uid == task.uid) {
 							// Dont keep the newTask, exit now so we dont change the queue
 							return false;
-							
-							// Add task to new list
-							newList.push(task);
 						}
 						else {
 							// Found a match, cancel it
 							if(task is ITask) ITask(task).cancel();
 						}
 					}
+					// Only add task that are not active
+					else {
+						newList.push(task);
+						match = true;
+					}
 				}	
 			}
 			// Set new itemList after removing selfoverrides, reset newList
-			itemList = newList
+			itemList = (match) ? newList : itemList;
 			newList = new Array();
 			
 			// Handle Task overrides
