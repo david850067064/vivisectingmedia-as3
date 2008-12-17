@@ -142,6 +142,18 @@ package com.vivisectingmedia.framework.controllers.abstracts
 			currentPhase = TaskEvent.TASK_IGNORED;
 			dispatchEvent(new TaskEvent(TaskEvent.TASK_IGNORED));
 		}
+		
+		public function complete():void
+		{
+			currentPhase = TaskEvent.TASK_COMPLETE;
+			dispatchEvent(new TaskEvent(TaskEvent.TASK_COMPLETE));
+		}
+		
+		public function error():void
+		{
+			currentPhase = TaskEvent.TASK_ERROR;
+			dispatchEvent(new TaskEvent(TaskEvent.TASK_ERROR));
+		}
 				
 	}
 }

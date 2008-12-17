@@ -53,12 +53,12 @@ package com.vivisectingmedia.libtests.elements.tasks
 		
 		public function triggerComplete():void
 		{
-			dispatchEvent(new TaskEvent(TaskEvent.TASK_COMPLETE));
+			complete();
 		}
 		
 		public function triggerError():void
 		{
-			dispatchEvent(new TaskEvent(TaskEvent.TASK_ERROR));
+			error();
 		}
 		
 		public function triggerReady():void
