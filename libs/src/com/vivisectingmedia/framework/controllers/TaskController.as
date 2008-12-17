@@ -38,7 +38,8 @@ package com.vivisectingmedia.framework.controllers
 		protected var activeTasks:HashTable;
 		protected var notReadyQueue:HashTable;
 		
-		private var __activeTaskLimit:uint = 1;
+		private var __activeTaskLimit:uint = 2;
+		private var __isBlocked:Boolean = false;
 		
 		public function TaskController()
 		{
@@ -169,7 +170,7 @@ package com.vivisectingmedia.framework.controllers
 		protected function next():void
 		{
 			// make sure we have tasks, if not exit
-			if(!taskQueue.hasItems) return;
+			if(__isBlocked || !taskQueue.hasItems) return;
 			
 			// see if we can handle a new task
 			if(activeTasks.length < __activeTaskLimit)
@@ -212,12 +213,18 @@ package com.vivisectingmedia.framework.controllers
 				// determine if the tasks are ready
 				if(task.ready)
 				{
+					// determine if the task is blocking, is so set up the block
+					__isBlocked = task.isBlocker;
+					
 					// start the task and add it to the active task list
 					task.addEventListener(TaskEvent.TASK_COMPLETE, handleTaskEvent);
 					task.addEventListener(TaskEvent.TASK_CANCEL, handleTaskEvent);
 					task.addEventListener(TaskEvent.TASK_ERROR, handleTaskEvent);
 					task.start();
 					activeTasks.addItem(task, true);
+					
+					// see if we can add more tasks
+					if(activeTasks.length < __activeTaskLimit) next();
 				} else {
 					// the task is not ready, add to the not ready queue
 					task.addEventListener(TaskEvent.TASK_READY, handleTaskEvent);
@@ -241,6 +248,10 @@ package com.vivisectingmedia.framework.controllers
 					task.removeEventListener(TaskEvent.TASK_COMPLETE, handleTaskEvent);
 					task.removeEventListener(TaskEvent.TASK_CANCEL, handleTaskEvent);
 					task.removeEventListener(TaskEvent.TASK_ERROR, handleTaskEvent);
+					
+					// unblock, if the task is a blocker
+					if(task.isBlocker) __isBlocked = false;
+					
 					next();
 				break;
 				

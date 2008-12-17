@@ -57,8 +57,9 @@ package com.vivisectingmedia.framework.controllers.abstracts
 		private var __priority:int;
 		private var __selfOverride:Boolean;
 		private var __uid:Object;
+		private var __isBlocker:Boolean;
 		
-		public function AbstractTask(type:String, priority:int = 5, uid:Object = null, selfOverride:Boolean = false)
+		public function AbstractTask(type:String, priority:int = 5, uid:Object = null, selfOverride:Boolean = false, blocking:Boolean = false)
 		{
 			super(this);
 			
@@ -67,6 +68,7 @@ package com.vivisectingmedia.framework.controllers.abstracts
 			__priority = priority;
 			__uid = uid;
 			__selfOverride = selfOverride;
+			__isBlocker = blocking;
 			
 			currentOverrides = new Array();
 			currentPhase = TASK_CREATED;
@@ -75,6 +77,20 @@ package com.vivisectingmedia.framework.controllers.abstracts
 		public function get priority():uint
 		{
 			return __priority;
+		}
+		
+		/**
+		 * Determines if the Task blocks all other items
+		 * in the TaskController.  If the Taks is set as
+		 * a blocking task, the controller will load no more
+		 * items from the queue until this Task is complete,
+		 * cancelled or errors. The default is false.
+		 *  
+		 * @return True if the group blocks, false if it does not.
+		 * 
+		 */
+		public function get isBlocker():Boolean {
+			return __isBlocker;
 		}
 		
 		public function get type():String
