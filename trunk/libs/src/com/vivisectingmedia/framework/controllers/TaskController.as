@@ -123,6 +123,7 @@ package com.vivisectingmedia.framework.controllers
 						else {
 							// Found a match, cancel it
 							if(task is ITask) ITask(task).cancel();
+							
 						}
 					}
 					// Only add task that are not active
@@ -147,11 +148,13 @@ package com.vivisectingmedia.framework.controllers
 					{
 						// found a match, cancel it
 						match == true; 
-						if(task is ITask) ITask(task).cancel();
+						// Cancel task		
+						ITask(task).cancel();
 					}
 				}
 				// Only add task that are not active
 					if(!match && !activeTasks.containsKey(task)) {
+						
 						newList.push(task);
 					}
 			}
@@ -220,9 +223,8 @@ package com.vivisectingmedia.framework.controllers
 					task.addEventListener(TaskEvent.TASK_COMPLETE, handleTaskEvent);
 					task.addEventListener(TaskEvent.TASK_CANCEL, handleTaskEvent);
 					task.addEventListener(TaskEvent.TASK_ERROR, handleTaskEvent);
-					task.start();
 					activeTasks.addItem(task, true);
-					
+					task.start();
 					// see if we can add more tasks
 					if(activeTasks.length < __activeTaskLimit) next();
 				} else {
@@ -238,6 +240,7 @@ package com.vivisectingmedia.framework.controllers
 		protected function handleTaskEvent(event:TaskEvent):void
 		{
 			var task:ITask = ITask(event.currentTarget);
+			
 			switch(event.type)
 			{
 				case TaskEvent.TASK_CANCEL:
