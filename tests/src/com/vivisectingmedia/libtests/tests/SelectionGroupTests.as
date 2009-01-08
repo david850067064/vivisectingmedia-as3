@@ -26,16 +26,10 @@ package com.vivisectingmedia.libtests.tests
 {
 	import com.vivisectingmedia.framework.controllers.SelectionController;
 	import com.vivisectingmedia.framework.controllers.SelectionGroup;
-	import com.vivisectingmedia.framework.controllers.interfaces.ISelectableGroup;
 	import com.vivisectingmedia.libtests.elements.selectiongroup.SelectionGroupObject;
 	import com.vivisectingmedia.libtests.elements.selectiongroup.SelectionObject;
 	
-	import flash.events.Event;
-	
 	import flexunit.framework.TestCase;
-	
-	import mx.core.UIComponent;
-	import mx.events.FlexEvent;
 
 	public class SelectionGroupTests extends TestCase
 	{
@@ -175,7 +169,7 @@ package com.vivisectingmedia.libtests.tests
 		 * Method tests that items can be added as an array and then replaced by 
 		 * a new array
 		 */
-		public function testResettingItmesWithArray():void{
+		public function testResettingItemsWithArray():void{
 			var selectionGroup:SelectionGroup = new SelectionGroup();
 			var selectionItem1:SelectionObject = new SelectionObject();
 			var selectionItem2:SelectionObject = new SelectionObject();
@@ -211,35 +205,58 @@ package com.vivisectingmedia.libtests.tests
 			// Test Error was thrown when setting Group Id (should be read only)
 			assertTrue("Error should be thrown", errorThrown);
 		}
-		
 		/**
-		 * Method tests the creation of an extension of the AbstractSeletableGroup
-		 * and the setting of the SelectionGroup
+		 * Method tests the default Click Event inside of the group
 		 */
-		public function testAbstractSelectableGropu():void {
+		public function testDefaultEvent():void {
 			var selectionGroup:SelectionGroup = new SelectionGroup();
-			var selectionGroup2:SelectionGroup = new SelectionGroup();
-			var selectionGroupItem1:SelectionGroupObject = new SelectionGroupObject();
-			var selectionGroupItem2:SelectionGroupObject = new SelectionGroupObject();	
+			var selectionItem1:SelectionGroupObject = new SelectionGroupObject();
+			var selectionItem2:SelectionGroupObject = new SelectionGroupObject();
 			
-			// Set Selection Group to Item
-			selectionGroupItem1.group = selectionGroup;
+			// Add both items to group
+			selectionGroup.items = [selectionItem1, selectionItem2];
 			
-			// Test Selection Group item is part of group
-			assertTrue("Error Item not part of group", selectionGroup.items[0] == selectionGroupItem1);
-			// Test SelectionGroup is same selection group
-			assertTrue("Error Group not the same",selectionGroup = selectionGroupItem1.group);
+			// Fire click for first item
+			selectionItem1.fireClickEvent();
 			
-			var errorThrown:Boolean;
-			try {
-				// Set Selection Group2 to Item
-				selectionGroupItem1.group = selectionGroup2;
-			}
-			catch(err:Error) {
-				errorThrown = true;
-			}
-			// Test Error was thrown for setting group twice
-			assertTrue("Error selection group can be set twice in AbstractSelectionGroupItem", errorThrown);					
+			// Verify first item is selected and second is not
+			assertTrue("First item should be selected", selectionItem1.selected);
+			assertTrue("Second item should NOT be selected", !selectionItem2.selected);
+			
+			// Fire click for second item
+			selectionItem2.fireClickEvent();
+			
+			// Verify second item is selected and second is not
+			assertTrue("First item should NOT be selected", !selectionItem1.selected);
+			assertTrue("Second item should be selected", selectionItem2.selected);
+		}
+		/**
+		 * Method tests the custom Event inside of the group
+		 */
+		public function testCustomEvent():void {
+			var selectionGroup:SelectionGroup = new SelectionGroup();
+			var selectionItem1:SelectionGroupObject = new SelectionGroupObject();
+			var selectionItem2:SelectionGroupObject = new SelectionGroupObject();
+			
+			// Set Custom Events
+			selectionGroup.events = SelectionGroupObject.CUSTOM_EVENT;
+			// Add both items to group
+			selectionGroup.items = [selectionItem1, selectionItem2];
+			
+			
+			// Fire click for first item
+			selectionItem1.fireCustomEvent();
+			
+			// Verify first item is selected and second is not
+			assertTrue("First item should be selected", selectionItem1.selected);
+			assertTrue("Second item should NOT be selected", !selectionItem2.selected);
+			
+			// Fire click for second item
+			selectionItem2.fireCustomEvent();
+			
+			// Verify second item is selected and second is not
+			assertTrue("First item should NOT be selected", !selectionItem1.selected);
+			assertTrue("Second item should be selected", selectionItem2.selected);
 		}
 	}
 }

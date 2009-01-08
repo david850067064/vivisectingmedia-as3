@@ -1,11 +1,16 @@
 package com.vivisectingmedia.libtests.elements.selectiongroup
 {
-	import com.vivisectingmedia.framework.controllers.SelectionGroup;
-	import com.vivisectingmedia.framework.controllers.abstracts.AbstractSelectableGroupItem;
+	import com.vivisectingmedia.framework.controllers.interfaces.ISelectable;
+	
+	import flash.events.Event;
+	import flash.events.MouseEvent;
+	
+	import mx.core.Container;
 
-	public class SelectionGroupObject extends AbstractSelectableGroupItem
+	public class SelectionGroupObject extends Container implements ISelectable
 	{
 		
+		public static var CUSTOM_EVENT:String = "CUSTOM_EVENT";
 		// PRIVATE GET/SET PROPERTIES
 		private var __selected:Boolean;
 		
@@ -20,20 +25,21 @@ package com.vivisectingmedia.libtests.elements.selectiongroup
 		 * @param value
 		 * 
 		 */
-		override public function set selected(value:Boolean):void
+		public function set selected(value:Boolean):void
 		{
 			__selected = value;
 		}
 		
-		override public function get selected():Boolean
+		public function get selected():Boolean
 		{
 			return __selected;
 		}
 		
-		override public function set group(value:SelectionGroup):void {
-			super.group = value;
+		public function fireClickEvent():void {
+			dispatchEvent(new Event(MouseEvent.CLICK));
 		}
-		
-		
+		public function fireCustomEvent():void {
+			dispatchEvent(new Event(CUSTOM_EVENT));
+		}
 	}
 }
