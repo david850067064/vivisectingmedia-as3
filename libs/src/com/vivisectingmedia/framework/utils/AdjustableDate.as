@@ -46,87 +46,24 @@ package com.vivisectingmedia.framework.utils
 		}
 		
 		/* CONSTRUCTOR */
-		public function AdjustableDate(yearOrTime:Object, month:Number, date:Number=1, hour:Number=0, minute:Number=0, second:Number=0, millisecond:Number=0)
+		public function AdjustableDate(yearOrTime:Object = null, month:Number=undefined, date:Number=1, hour:Number=0, minute:Number=0, second:Number=0, millisecond:Number=0)
 		{
-			_date = new Date(yearOrTime, month, date, hour, minute, second, millisecond);
+			if(!yearOrTime) {
+				// create date based on now
+				_date = new Date();
+			} else if(month >= 0) {
+				// this is probably a year
+				_date = new Date(yearOrTime, month, date, hour, minute, second, millisecond);
+			} else {
+				// create date based on object/time
+				_date = new Date(yearOrTime);
+			}
 		}
 
 		/* PUBLIC METHODS */
 		public function get dateInstance():Date
 		{
 			return _date;
-		}
-		/**
-		 * The number of milliseconds since midnight January 1, 1970, 
-		 * universal time, for a Date object. Use this method to 
-		 * represent a specific instant in time when comparing 
-		 * two or more AdjustableDate objects.
-		 * 
-		 * @param value The new time in milliseconds.
-		 * 
-		 */
-		public function set time(value:Number):void
-		{
-			_date.time = value;
-		}
-		
-		public function get time():Number
-		{
-			return _date.time;
-		}
-		
-		/**
-		 * The day of the month (an integer from 1 to 31) specified by a 
-		 * Date object according to local time. Local time is determined 
-		 * by the operating system on which Flash Player is running.
-		 * 
-		 * @param value
-		 * 
-		 */		
-		public function set date(value:Number):void
-		{
-			_date.date = value;
-		}
-		
-		public function get date():Number
-		{
-			return _date.date;
-		}
-		
-		/**
-		 * The month (0 for January, 1 for February, and so on) portion of 
-		 * a Date object according to local time. Local time is determined 
-		 * by the operating system on which Flash Player is running. 
-		 * 
-		 * @param value
-		 * 
-		 */
-		public function set month(value:Number):void
-		{
-			_date.month = value;
-		}
-		
-		public function get month():Number
-		{
-			return _date.month;
-		}
-		
-		/**
-		 * The full year (a four-digit number, such as 2000) of a Date 
-		 * object according to local time. Local time is determined 
-		 * by the operating system on which Flash Player is running.
-		 * 
-		 * @param value
-		 * 
-		 */
-		public function set year(value:Number):void
-		{
-			_date.fullYear = value;
-		}
-		
-		public function get year():Number
-		{
-			return _date.fullYear;
 		}
 		
 		/**
@@ -312,6 +249,352 @@ package com.vivisectingmedia.framework.utils
 			if(amount == 0) return;
 			_date.fullYear = _date.fullYear + amount;
 		}
-
+		
+		/* PROXY METHODS */		
+		/**
+		 * The day of the month (an integer from 1 to 31) specified by a 
+		 * Date object according to local time. Local time is determined 
+		 * by the operating system on which Flash Player is running.
+		 * 
+		 * @param value
+		 * 
+		 */		
+		public function set date(value:Number):void
+		{
+			_date.date = value;
+		}
+		
+		public function get date():Number
+		{
+			return _date.date;
+		}
+		
+		/**
+		 * The day of the month (an integer from 1 to 31) of a Date object 
+		 * according to universal time (UTC).
+		 * 
+		 */
+		public function set dateUTC(value:Number):void {
+			_date.dateUTC = value;
+		}
+		
+		public function get dateUTC():Number {
+			return _date.dateUTC;
+		}
+		
+		/**
+		 * The day of the week (0 for Sunday, 1 for Monday, and so on) specified 
+		 * by this Date according to local time. Local time is determined by the 
+		 * operating system on which Flash Player is running.
+		 * 
+		 */		
+		public function get day():Number {
+			return _date.day;
+		}
+		
+		/**
+		 * The day of the week (0 for Sunday, 1 for Monday, and so on) of this Date 
+		 * according to universal time (UTC).
+		 * 
+		 */		
+		public function get dayUTC():Number {
+			return _date.dayUTC;
+		}
+		
+		/**
+		 * The full year (a four-digit number, such as 2000) of a Date object 
+		 * according to local time. Local time is determined by the operating 
+		 * system on which Flash Player is running.
+		 * 
+		 */
+		public function set fullYear(value:Number):void {
+			_date.fullYear = value;
+		}
+		
+		public function get fullYear():Number {
+			return _date.fullYear;
+		}
+		
+		/**
+		 * The four-digit year of a Date object according to universal time (UTC).
+		 * 
+		 */
+		public function set fullYearUTC(value:Number):void {
+			_date.fullYearUTC = value;
+		}
+		
+		public function get fullYearUTC():Number {
+			return _date.fullYearUTC;
+		}
+		
+		/**
+		 * The hour (an integer from 0 to 23) of the day portion of a Date 
+		 * object according to local time. Local time is determined by the 
+		 * operating system on which Flash Player is running.
+		 * 
+		 */
+		public function set hours(value:Number):void {
+			_date.hours = value;
+		}
+		
+		public function get hours():Number {
+			return _date.hours;
+		}
+		
+		/**
+		 * The hour (an integer from 0 to 23) of the day of a Date object 
+		 * according to universal time (UTC).
+		 * 
+		 */
+		public function set hoursUTC(value:Number):void {
+			_date.hoursUTC = value;
+		}
+		
+		public function get hoursUTC():Number {
+			return _date.hoursUTC;
+		}
+		
+		/**
+		 * The milliseconds (an integer from 0 to 999) portion of a Date 
+		 * object according to local time. Local time is determined by 
+		 * the operating system on which Flash Player is running
+		 * 
+		 */
+		public function set milliseconds(value:Number):void {
+			_date.milliseconds = value;
+		}
+		
+		public function get milliseconds():Number {
+			return _date.milliseconds;
+		}
+		
+		/**
+		 * The milliseconds (an integer from 0 to 999) portion of a Date 
+		 * object according to universal time (UTC).
+		 * 
+		 */
+		public function set millisecondsUTC(value:Number):void {
+			_date.millisecondsUTC = value;
+		}
+		
+		public function get millisecondsUTC():Number {
+			return _date.millisecondsUTC;
+		}
+		
+		/**
+		 * The minutes (an integer from 0 to 59) portion of a Date object 
+		 * according to local time. Local time is determined by the 
+		 * operating system on which Flash Player is running.
+		 */
+		public function set minutes(value:Number):void {
+			_date.minutes = value;
+		}
+		
+		public function get minutes():Number {
+			return _date.minutes;
+		}
+		
+		/**
+		 * The minutes (an integer from 0 to 59) portion of a Date 
+		 * object according to universal time (UTC).
+		 */
+		public function set minutesUTC(value:Number):void {
+			_date.minutesUTC = value;
+		}
+		
+		public function get minutesUTC():Number {
+			return _date.minutesUTC;
+		}
+		
+		/**
+		 * The month (0 for January, 1 for February, and so on) portion of 
+		 * a Date object according to local time. Local time is determined 
+		 * by the operating system on which Flash Player is running. 
+		 * 
+		 */
+		public function set month(value:Number):void
+		{
+			_date.month = value;
+		}
+		
+		public function get month():Number
+		{
+			return _date.month;
+		}
+		
+		/**
+		 * The month (0 [January] to 11 [December]) portion of a Date object 
+		 * according to universal time (UTC).
+		 * 
+		 */
+		public function set monthUTC(value:Number):void
+		{
+			_date.monthUTC = value;
+		}
+		
+		public function get monthUTC():Number
+		{
+			return _date.monthUTC;
+		}
+		
+		/**
+		 * The seconds (an integer from 0 to 59) portion of a Date object 
+		 * according to local time. Local time is determined by the 
+		 * operating system on which Flash Player is running.
+		 * 
+		 */
+		public function set seconds(value:Number):void
+		{
+			_date.seconds = value;
+		}
+		
+		public function get seconds():Number
+		{
+			return _date.seconds;
+		}
+		
+		/**
+		 * The seconds (an integer from 0 to 59) portion of a Date object 
+		 * according to universal time (UTC).
+		 * 
+		 */
+		public function set secondsUTC(value:Number):void
+		{
+			_date.secondsUTC = value;
+		}
+		
+		public function get secondsUTC():Number
+		{
+			return _date.secondsUTC;
+		}
+		
+		/**
+		 * The number of milliseconds since midnight January 1, 1970, 
+		 * universal time, for a Date object. Use this method to 
+		 * represent a specific instant in time when comparing 
+		 * two or more AdjustableDate objects.
+		 * 
+		 * @param value The new time in milliseconds.
+		 * 
+		 */
+		public function set time(value:Number):void
+		{
+			_date.time = value;
+		}
+		
+		public function get time():Number
+		{
+			return _date.time;
+		}
+		
+		/**
+		 * The difference, in minutes, between universal time (UTC) and 
+		 * the computer's local time. Specifically, this value is the 
+		 * number of minutes you need to add to the computer's local time 
+		 * to equal UTC. If your computer's time is set later than UTC, 
+		 * the value will be negative. 
+		 * 
+		 */
+		public function get timezoneOffset():Number {
+			return _date.timezoneOffset;
+			
+		}
+		
+		/**
+		 * Returns a string representation of the day and date only, and does 
+		 * not include the time or timezone. Contrast with the following methods:
+		 * <ul>
+		 * 	<li>AdjustableDate.toTimeString(), which returns only the time and timezone</li>
+		 * 	<li>AdjustableDate.toString(), which returns not only the day and date, but also the time and timezone.</li>
+		 * </ul> 
+		 * 
+		 * @return The string representation of day and date only.
+		 * 
+		 */
+		public function toDateString():String {
+			return _date.toDateString();
+		}
+		
+		/**
+		 * Returns a String representation of the day, date, time, given in local time. 
+		 * Contrast with the AdjustableDate.toString() method, which returns the same information 
+		 * (plus the timezone) with the year listed at the end of the string.
+		 * 
+		 * @return The string representation of time and timezone only.
+		 * 
+		 */
+		public function toLocaleString():String {
+			return _date.toLocaleString()
+		}
+		
+		/**
+		 * Returns a String representation of the day and date only, and does not include 
+		 * the time or timezone. This method returns the same value as AdjustableDate.toDateString. 
+		 * Contrast with the following methods:
+		 * <ul>
+		 * 	<li>AdjustableDate.toTimeString(), which returns only the time and timezone</li>
+		 * 	<li>AdjustableDate.toString(), which returns not only the day and date, but also the time and timezone.</li>
+		 * </ul>
+		 * 
+		 * @return The String representation of day and date only.
+		 * 
+		 */
+		public function toLocaleDateString():String {
+			return _date.toLocaleDateString();
+		}
+		
+		/**
+		 * Returns a String representation of the time only, and does not include the day, 
+		 * date, year, or timezone. Contrast with the Date.toTimeString() method, 
+		 * which returns the time and timezone. 
+		 * 
+		 * @return The string representation of time and timezone only.
+		 * 
+		 */
+		public function toLocaleTimeString():String {
+			return _date.toLocaleTimeString();
+		}
+		
+		/**
+		 * Returns a String representation of the day, date, time, and timezone. 
+		 * The date format for the output is:
+		 * 
+		 * <block><code>Day Mon Date HH:MM:SS TZD YYYY</code></block>
+		 * 
+		 * <p>For example:
+		 * <block><code>Wed Apr 12 15:30:17 GMT-0700 2006</code></block>
+		 * </p>
+		 * 
+		 * @return The string representation of a Date object.
+		 * 
+		 * 
+		 */
+		public function toString():String {
+			return _date.toString();
+		}
+		
+		/**
+		 * Returns a String representation of the time and timezone only, 
+		 * and does not include the day and date. Contrast with the AdjustableDate.toDateString() 
+		 * method, which returns only the day and date. 
+		 * 
+		 * @return The string representation of time and timezone only.
+		 * 
+		 */
+		public function toTimeString():String {
+			return _date.toTimeString();
+		}
+		
+		/**
+		 * Returns a String representation of the day, date, and time in 
+		 * universal time (UTC). For example, the date February 1, 2005 
+		 * is returned as Tue Feb 1 00:00:00 2005 UTC.
+		 *  
+		 * @return The string representation of a Date object in UTC time.
+		 * 
+		 */
+		public function toUTCString():String {
+			return _date.toUTCString();
+		}
 	}
 }
