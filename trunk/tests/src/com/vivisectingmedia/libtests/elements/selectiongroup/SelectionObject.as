@@ -26,7 +26,7 @@ package com.vivisectingmedia.libtests.elements.selectiongroup
 {
 	import com.vivisectingmedia.framework.controllers.interfaces.ISelectable;
 	
-	import flexunit.framework.Assert;
+	import mx.core.Container;
 
 	/**
 	 * This is a test element that is used to verify selection functionality.  The SelectionOjbect implements
@@ -35,7 +35,7 @@ package com.vivisectingmedia.libtests.elements.selectiongroup
 	 * @author James Polanco
 	 * 
 	 */
-	public class SelectionObject implements ISelectable
+	public class SelectionObject extends Container implements ISelectable
 	{
 		private var __selected:Boolean = false;
 		

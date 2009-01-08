@@ -26,6 +26,10 @@ package com.vivisectingmedia.framework.controllers
 {
 	import com.vivisectingmedia.framework.controllers.interfaces.ISelectable;
 	
+	import flash.events.Event;
+	import flash.events.IEventDispatcher;
+	import flash.events.MouseEvent;
+	
 	public class SelectionGroup
 	{
 		
@@ -34,7 +38,8 @@ package com.vivisectingmedia.framework.controllers
 		
 		// PRIVATE VARIABLES
 		private var __groupId:int;
-		
+		private var _eventString:String;
+		private var _events:Array;
 		// PRIVATE GET/SET VARIABLES
 		
 		public function SelectionGroup()
@@ -69,6 +74,40 @@ package com.vivisectingmedia.framework.controllers
 		public function set groupId(groupId:int):void {
 			throw Error("Read only property");
 		}
+		
+		/**
+		 * Returns the comma seperated list of events used by this
+		 * group.
+		 * 
+		 * @return Comma seperated list of events.
+		 */
+		public function get events():String {
+			return _eventString;
+		}
+		
+		/**
+		 * Property sets the events that the group will listen to in
+		 * order to make it's selection of an item. This property
+		 * can only be set once. An error will be thrown
+		 * if it is set multiple times.
+		 * Also the property must be set before items are set. Items
+		 * require events to be defined and can not be adjusted after the 
+		 * fact.
+		 *  
+		 * @param value Comma seperated list of events.
+		 */
+		public function set events(value:String):void {
+			if(_eventString) {
+				throw new Error("Events can only be set once");
+			}
+			else if(this.items.length > 0) {
+				throw new Error("Events must be set before items are set");
+			}
+			
+			_eventString = value;
+			// Remove spaces in between the commas and then split by commas
+			_events = value.replace(/(\s)+,/, ",").replace(/,(\s)+/,",").split(",");
+		}
 		/**
 		 * Variable holds all items currently in the group
 		 * 
@@ -83,16 +122,44 @@ package com.vivisectingmedia.framework.controllers
 		 * @param values Array containing all items to be included in the group
 		 */
 		public function set items(values:Array):void {
+			// Set events
+			var events:Array = (_events && events.length > 0) ? _events : [MouseEvent.CLICK];
+			var eventLen:uint = events.length;
+			
+			// Remove event listeners
+			
+			var itemLen:uint = items.length;
+			// Loop through all items currently in the group
+			for(var x:uint; x<itemLen;x++) {
+				// Loop through all events available
+				for(var i:uint; i < eventLen;i++) {
+					IEventDispatcher(items[x]).removeEventListener(events[i], handleSelection);
+				}
+			}	
+			
 			// Deselect all items before clearing
 			SelectionController.deselectAll(this.__groupId);
-				
+			
 			// Clear all items
 			SelectionController.removeAllItems(this.__groupId);
 
 			// Add all new targets
-			for(var i:uint;i<values.length;i++) {
-				SelectionController.addItem(values[i], this.__groupId);
-			}
+			
+			var valueLen:uint = values.length;
+			// Loop through all items currently in the group
+			for(x = 0; x < valueLen;x++) {
+				if(values[x] != null) {
+					// Loop through all events available
+					for(i = 0; i < eventLen;i++) {
+						IEventDispatcher(values[x]).addEventListener(events[i], handleSelection);
+					}
+					SelectionController.addItem(values[x], this.__groupId);
+				}
+			}	
+		}
+		
+		public function handleSelection(event:Event):void {
+			SelectionController.selectItem(ISelectable(event.currentTarget));
 		}
 
 	}
