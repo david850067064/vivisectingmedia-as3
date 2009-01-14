@@ -293,5 +293,99 @@ package com.vivisectingmedia.libtests.tests
 			list[0] = item2;			
 			assertTrue("Queue did not return expected item1.", item1 === queue.next());
 		}
+		
+		/**
+		 * Verify that removing an item from the beginning of the queue works. 
+		 * 
+		 */
+		public function testRemoveAtBegining():void {
+			// create the queue and 3 test items
+			var queue:PriorityQueue = new PriorityQueue();
+			var item1:Object = new Object();
+			var item2:Object = new Object();
+			var item3:Object = new Object();
+			
+			// add the items in order
+			queue.addItem(item1);
+			queue.addItem(item2); 
+			queue.addItem(item3);
+			
+			// remove the first item, verify true is returned, the length is now two and the item order is correct
+			assertTrue("The removeAt() method did not return true when removing a valid item.", queue.removeAt(0));
+			assertTrue("The length of the queue should have been 2.", queue.length == 2);
+			assertTrue("Queue did not return expected item2.", item2 === queue.next());
+			assertTrue("Queue did not return expected item3.", item3 === queue.next());
+		}
+		
+		/**
+		 * Verify that removing an item from the middle of the queue works. 
+		 * 
+		 */
+		public function testRemoveAtMiddle():void {
+			// create the queue and 3 test items
+			var queue:PriorityQueue = new PriorityQueue();
+			var item1:Object = new Object();
+			var item2:Object = new Object();
+			var item3:Object = new Object();
+			
+			// add the items in order
+			queue.addItem(item1);
+			queue.addItem(item2); 
+			queue.addItem(item3);
+			
+			// remove the first item, verify true is returned, the length is now two and the item order is correct
+			assertTrue("The removeAt() method did not return true when removing a valid item.", queue.removeAt(1));
+			assertTrue("The length of the queue should have been 2.", queue.length == 2);
+			assertTrue("Queue did not return expected item1.", item1 === queue.next());
+			assertTrue("Queue did not return expected item3.", item3 === queue.next());
+		}
+		
+		/**
+		 * Verify that removing an item from the end of the queue works. 
+		 * 
+		 */
+		public function testRemoveAtEnd():void {
+			// create the queue and 3 test items
+			var queue:PriorityQueue = new PriorityQueue();
+			var item1:Object = new Object();
+			var item2:Object = new Object();
+			var item3:Object = new Object();
+			
+			// add the items in order
+			queue.addItem(item1);
+			queue.addItem(item2); 
+			queue.addItem(item3);
+			
+			// remove the first item, verify true is returned, the length is now two and the item order is correct
+			assertTrue("The removeAt() method did not return true when removing a valid item.", queue.removeAt(2));
+			assertTrue("The length of the queue should have been 2.", queue.length == 2);
+			assertTrue("Queue did not return expected item1.", item1 === queue.next());
+			assertTrue("Queue did not return expected item2.", item2 === queue.next());
+		}
+		
+		/**
+		 * Verify that removing an invalid postion is handled with no
+		 * error and does not modify the queue. 
+		 * 
+		 */
+		public function testRemoveAtInvalidPosition():void {
+			// create the queue and 3 test items
+			var queue:PriorityQueue = new PriorityQueue();
+			var item1:Object = new Object();
+			var item2:Object = new Object();
+			var item3:Object = new Object();
+			
+			// add the items in order
+			queue.addItem(item1);
+			queue.addItem(item2); 
+			queue.addItem(item3);
+			
+			// remove the a bad position, verify false is returned and the queue is unchanged
+			assertFalse("The removeAt() method did not return false when removing an invalid position.", queue.removeAt(6));
+			assertTrue("The length of the queue should have been 3.", queue.length == 3);
+			assertTrue("Queue did not return expected item1.", item1 === queue.next());
+			assertTrue("Queue did not return expected item2.", item2 === queue.next());
+			assertTrue("Queue did not return expected item3.", item3 === queue.next());
+		}
 	}
 }
