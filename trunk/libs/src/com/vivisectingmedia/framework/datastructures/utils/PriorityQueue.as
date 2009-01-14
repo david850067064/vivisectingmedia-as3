@@ -142,6 +142,24 @@ package com.vivisectingmedia.framework.datastructures.utils
 		}
 		
 		/**
+		 * Removes an item at the specified position.  If the position
+		 * is invalid then a false value is returned stating that the item
+		 * was not removed at the provided position.  If the position is valid
+		 * the method returns a true for success.
+		 *  
+		 * @param position The position in the PriorityQueue to remove.
+		 * @return True for successful removal, false for an invalid position.
+		 * 
+		 */
+		public function removeAt(position:uint):Boolean
+		{
+			// verify that it is a valid position
+			if(position > _table.length || position < 0) return false;
+			_table.splice(position, 1);
+			return true;
+		}
+		
+		/**
 		 * Clears all items from the queue. 
 		 * 
 		 */
