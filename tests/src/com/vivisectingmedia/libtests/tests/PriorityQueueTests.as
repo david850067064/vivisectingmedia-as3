@@ -162,6 +162,67 @@ package com.vivisectingmedia.libtests.tests
 		}
 		
 		/**
+		 * Verify that only the requested number of items 
+		 * are removed when a value is provided and a priority 
+		 * 
+		 */		
+		public function testRemoveItemWithValueAndPriority():void
+		{
+			// create the queue and 2 test items
+			var queue:PriorityQueue = new PriorityQueue();
+			var item1:Object = new Object();
+			var item2:Object = new Object();
+			
+			// add the multiple instance of the same items, in different order, with different priority
+			queue.addItem(item1, 0);
+			queue.addItem(item2, 1);
+			queue.addItem(item1, 1);
+			queue.addItem(item2, 2);
+			queue.addItem(item1, 2);
+			
+			// remove item 1 with priority 0 only
+			queue.removeItem(item1, 2, 0);
+			
+			// verify that the length is now 4, and calling next returns the correct order
+			assertTrue("Queue length is incorrect for testRemoveItemWithValueAndPriority().", queue.length == 4);
+			assertTrue("Queue did not return expected item2 for testRemoveItemWithValue().", item2 === queue.next());
+			assertTrue("Queue did not return expected item1 for testRemoveItemWithValue().", item1 === queue.next());
+			assertTrue("Queue did not return expected item2 for testRemoveItemWithValue().", item2 === queue.next());
+			assertTrue("Queue did not return expected item1 for testRemoveItemWithValue().", item1 === queue.next());
+			assertFalse("Queue should not have any items left.", queue.hasItems);
+		}
+		
+		/**
+		 * Verify that only the requested number of items 
+		 * are removed when a value is provided and a priority 
+		 * 
+		 */		
+		public function testRemoveItemWithMaxValueAndPriority():void
+		{
+			// create the queue and 2 test items
+			var queue:PriorityQueue = new PriorityQueue();
+			var item1:Object = new Object();
+			var item2:Object = new Object();
+			
+			// add the multiple instance of the same items, in different order, with different priority
+			queue.addItem(item1, 0);
+			queue.addItem(item2, 1);
+			queue.addItem(item1, 1);
+			queue.addItem(item2, 2);
+			queue.addItem(item1, 0);
+			
+			// remove item 1 with priority 0 only
+			queue.removeItem(item1, int.MAX_VALUE, 0);
+			
+			// verify that the length is now 3, and calling next returns the correct order
+			assertTrue("Queue length is incorrect for testRemoveItemWithValueAndPriority().", queue.length == 3);
+			assertTrue("Queue did not return expected item2 for testRemoveItemWithValue().", item2 === queue.next());
+			assertTrue("Queue did not return expected item1 for testRemoveItemWithValue().", item1 === queue.next());
+			assertTrue("Queue did not return expected item2 for testRemoveItemWithValue().", item2 === queue.next());
+			assertFalse("Queue should not have any items left.", queue.hasItems);
+		}
+		
+		/**
 		 * Verify that all items are removed. 
 		 * 
 		 */		
