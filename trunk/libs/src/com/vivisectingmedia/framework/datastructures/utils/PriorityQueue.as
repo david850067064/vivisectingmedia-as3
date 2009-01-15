@@ -109,7 +109,7 @@ package com.vivisectingmedia.framework.datastructures.utils
 		 * @return Boolean True if one or more instances were found, otherwise False
 		 * 
 		 */
-		public function removeItem(item:*, numberOfInstances:int = int.MAX_VALUE):Boolean
+		public function removeItem(item:*, numberOfInstances:int = int.MAX_VALUE, priority:int = -1):Boolean
 		{
 			// verify that we are removing at least one item (negatives not allowed)
 			if(numberOfInstances < 1) return false;
@@ -121,12 +121,23 @@ package com.vivisectingmedia.framework.datastructures.utils
 			var itemFound:Boolean;			
 			for(var i:uint = 0; i < len; i++)
 			{
-				if(PriorityWrapper(_table[i]).item == item)
-				{
-					if(++count > numberOfInstances)
-					{
+				var inst:PriorityWrapper = PriorityWrapper(_table[i]);
+				
+				// match the priority then the item
+				if(priority > -1 && inst.priority == priority && inst.item == item) {
+					if(++count > numberOfInstances) {
 						// push the rest and end
 						clone = clone.concat(_table.slice(i));
+						itemFound = true;
+						break;
+					}
+					itemFound = true;
+				} else if(priority < 0 && PriorityWrapper(_table[i]).item == item) {
+					// we have no pririty requirements
+					if(++count > numberOfInstances) {
+						// push the rest and end
+						clone = clone.concat(_table.slice(i));
+						itemFound = true;
 						break;
 					}
 					itemFound = true;
