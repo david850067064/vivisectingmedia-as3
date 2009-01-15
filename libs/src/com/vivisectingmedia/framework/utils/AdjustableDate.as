@@ -1,6 +1,6 @@
 /* ***** BEGIN MIT LICENSE BLOCK *****
  * 
- * Copyright (c) 2008 James Polanco
+ * Copyright (c) 2009 DevelopmentArc LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,24 @@ package com.vivisectingmedia.framework.utils
 {
 	import mx.effects.easing.Back;
 	
+	/**
+	 * The AdjustableDate Class is a utility that provides a proxy wrapper around
+	 * a Date object and contains utility methods intended for helping manage the
+	 * Date instance.  The Date object is a Final class so a proxy pattern must be
+	 * used to expose the date methods on the AdjustableDate.
+	 * 
+	 * <p>The AdjustableDate provides helper methods to quickly change the date value
+	 * by milliseconds, seconds, minutes, hours, days, months and years.  Instead of
+	 * having to set the values you can offset a Date by 4 months by using the offsetYears()
+	 * method and passing in 4 as the argument.  This will then move the date forward by
+	 * 4 years.</p>
+	 * 
+	 * <p>The AdjustableDate also can determine if the date is a leap year and also provides
+	 * access to the internal date class.</p>
+	 * 
+	 * @author James Polanco
+	 * 
+	 */
 	public class AdjustableDate
 	{
 		/* PRIVATE PROPERTIES */
@@ -46,6 +64,10 @@ package com.vivisectingmedia.framework.utils
 		}
 		
 		/* CONSTRUCTOR */
+		/**
+		 * @copy Date#Date
+		 * 
+		 */
 		public function AdjustableDate(yearOrTime:Object = null, month:Number=undefined, date:Number=1, hour:Number=0, minute:Number=0, second:Number=0, millisecond:Number=0)
 		{
 			if(!yearOrTime) {
@@ -61,6 +83,11 @@ package com.vivisectingmedia.framework.utils
 		}
 
 		/* PUBLIC METHODS */
+		/**
+		 * Provides access to the internal date instance.
+		 *  
+		 * 
+		 */
 		public function get dateInstance():Date
 		{
 			return _date;
