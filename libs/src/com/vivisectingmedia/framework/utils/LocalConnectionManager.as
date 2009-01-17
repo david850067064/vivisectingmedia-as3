@@ -1,6 +1,7 @@
 /* ***** BEGIN MIT LICENSE BLOCK *****
  * 
- * Copyright (c) 2008 James Polanco
+ * Copyright (c) 2009 DevelopmentArc LLC
+ * version 1.1
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,14 +29,16 @@ package com.vivisectingmedia.framework.utils
 	
 	import flash.events.AsyncErrorEvent;
 	import flash.events.EventDispatcher;
-	import flash.events.IEventDispatcher;
 	import flash.events.StatusEvent;
 	import flash.net.LocalConnection;
 	import flash.net.registerClassAlias;
 	import flash.utils.describeType;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
-
+	
+	[Event(name="connectionError", type="com.vivisectingmedia.framework.utils.events.LocalConnectionEvent")]
+	[Event(name="sentMessageError", type="com.vivisectingmedia.framework.utils.events.LocalConnectionEvent")]
+	[Event(name="statusMessage", type="com.vivisectingmedia.framework.utils.events.LocalConnectionEvent")]
 	/**
 	 * The LocalConnectionManager provides a simpler interface to the Flash LocalConnection that is designed to support
 	 * retention of Class type when communication with other ActionScript 3 Applications.  For Class retention to work
@@ -68,6 +71,11 @@ package com.vivisectingmedia.framework.utils
 		protected var currentConnectionName:String;
 		
 		/**
+		 * Stores the current domain list that was defined at construction. 
+		 */
+		protected var currentDomainList:Array;
+		
+		/**
 		 * Constructor.  Creates a new instance of a LCM and establishes the LocalConnection instance during construction.
 		 * 
 		 * <p>The constructor also opens the application for communication with other LCM enabled applications based on the name provided.  For other LCM
@@ -79,42 +87,19 @@ package com.vivisectingmedia.framework.utils
 		 * @param connTarget This is the object that LC message calls are applied to when received from another applicaiton.
 		 * @param connectionName The application communication name
 		 * @param domainList An array of domains to allow communication with the LC, if no value is set the default is '*'. 
-		 * @param eventTarget See EventDispatcher for full details.
+		 * @param autoConnect Determines if the manager should attempt to auto connect on construction.
 		 * 
 		 */
-		public function LocalConnectionManager(connTarget:Object, connectionName:String, domainList:Array = null, eventTarget:IEventDispatcher=null)
+		public function LocalConnectionManager(connTarget:Object, connectionName:String, domainList:Array = null, autoConnect:Boolean = true)
 		{
-			super(eventTarget);
+			super(this);
 			
 			connectionTarget = connTarget;
+			currentDomainList = domainList;
 			
-			// create connection
-			connection = new LocalConnection();
-			connection.client = this;
-			if(domainList)
-			{
-				connection.allowDomain(domainList);
-			} else {
-				connection.allowDomain("*");
-			}
+			if(!autoConnect) return;
 			
-			
-			// register events
-			connection.addEventListener(AsyncErrorEvent.ASYNC_ERROR, handleAsyncEvent);
-			connection.addEventListener(StatusEvent.STATUS, handleStatusEvent);
-			
-			try
-			{
-				// try to connect based on the provided name
-				connection.connect(connectionName);
-				currentConnectionName = connectionName;
-			} catch (e:Error) {
-				// unable to connect, probable cause is existing connection
-				var event:LocalConnectionEvent = new LocalConnectionEvent(LocalConnectionEvent.CONNECTION_ERROR);
-				event.errorMessage = e.message;
-				event.errorID = e.errorID;
-				dispatchEvent(event);
-			}
+			connect(connectionName);
 		}
 		
 		/**
@@ -135,6 +120,8 @@ package com.vivisectingmedia.framework.utils
 		 */		
 		public function disconnect():void
 		{
+			if(!connection) return;
+			
 			try
 			{
 				connection.close();
@@ -144,6 +131,71 @@ package com.vivisectingmedia.framework.utils
 			
 			connection.removeEventListener(AsyncErrorEvent.ASYNC_ERROR, handleAsyncEvent);
 			connection.removeEventListener(StatusEvent.STATUS, handleStatusEvent);
+			
+			connection = undefined;
+		}
+		
+		/**
+		 * Used to determine of the LocalConnectionManager has an active connection.
+		 *  
+		 * @return True if connected, false if not connected to a LocalConnection instance.
+		 * 
+		 */
+		public function get connected():Boolean {
+			return (connection) ? true : false;
+		}
+		
+		/**
+		 * Used to connect to a local connection name.  If the local connection is not
+		 * connected this method creates a new connection and connects to the name
+		 * provided. If a name is not provided the default name defined at the construction
+		 * is used or the last name called via the connect method.
+		 * 
+		 * <p>If a connection is currently established, this method disconnects from the
+		 * exisiting connection and creates a new connection.</p>
+		 *  
+		 * @param connectionName
+		 * 
+		 */
+		public function connect(connectionName:String = undefined, domainList:Array = null):void {
+			
+			if(connectionName) {
+				currentConnectionName = connectionName;
+			}
+			
+			if(domainList) {
+				currentDomainList = domainList;
+			}
+			
+			// make sure we aren't already connected
+			if(connection) disconnect();
+			
+			// create connection
+			connection = new LocalConnection();
+			connection.client = this;
+			if(currentDomainList)
+			{
+				connection.allowDomain(currentDomainList);
+			} else {
+				connection.allowDomain("*");
+			}
+			
+			// register events
+			connection.addEventListener(AsyncErrorEvent.ASYNC_ERROR, handleAsyncEvent);
+			connection.addEventListener(StatusEvent.STATUS, handleStatusEvent);
+			
+			// we are set to autoconnect, make the connection
+			try
+			{
+				// try to connect based on the provided name
+				connection.connect(currentConnectionName);
+			} catch (e:Error) {
+				// unable to connect, probable cause is existing connection
+				var event:LocalConnectionEvent = new LocalConnectionEvent(LocalConnectionEvent.CONNECTION_ERROR);
+				event.errorMessage = e.message;
+				event.errorID = e.errorID;
+				dispatchEvent(event);
+			}
 		}
 		
 		/**
@@ -285,6 +337,8 @@ package com.vivisectingmedia.framework.utils
 		 */
 		public function sendMessage(target:String, methodName:String, ...  args):void
 		{
+			if(!connection) return;
+			
 			var argList:Array = new Array();
 			var aliasList:Array = new Array();
 			
