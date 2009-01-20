@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
 /* ***** BEGIN MIT LICENSE BLOCK *****
  * 
  * Copyright (c) 2009 DevelopmentArc LLC
@@ -24,13 +22,20 @@
  *
  *
  * ***** END MIT LICENSE BLOCK ***** */
--->
-<LibraryTestingApplication
-	xmlns="com.developmentarc.libtests.*"
-	xmlns:mx="http://www.adobe.com/2006/mxml"
-	xmlns:flexunit="flexunit.flexui.*" 
-	layout="absolute" >
-
-	<!-- TEST UI -->
-	<flexunit:TestRunnerBase id="test_runner" width="100%" height="100%" />
-</LibraryTestingApplication>
+package com.developmentarc.libtests.elements.instances
+{
+	public class InstanceClass
+	{
+		private var __id:Number;
+		
+		public function InstanceClass()
+		{
+			__id = new Date().time;
+		}
+		
+		public function get id():Number
+		{
+			return __id;
+		}
+	}
+}

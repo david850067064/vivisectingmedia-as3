@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
 /* ***** BEGIN MIT LICENSE BLOCK *****
  * 
  * Copyright (c) 2009 DevelopmentArc LLC
@@ -24,13 +22,46 @@
  *
  *
  * ***** END MIT LICENSE BLOCK ***** */
--->
-<LibraryTestingApplication
-	xmlns="com.developmentarc.libtests.*"
-	xmlns:mx="http://www.adobe.com/2006/mxml"
-	xmlns:flexunit="flexunit.flexui.*" 
-	layout="absolute" >
+package com.developmentarc.libtests.elements.selectiongroup
+{
+	import com.developmentarc.framework.controllers.interfaces.ISelectable;
+	
+	import mx.core.Container;
 
-	<!-- TEST UI -->
-	<flexunit:TestRunnerBase id="test_runner" width="100%" height="100%" />
-</LibraryTestingApplication>
+	/**
+	 * This is a test element that is used to verify selection functionality.  The SelectionOjbect implements
+	 * the ISelectableObject interface allowing it to be used in the SelectionController.
+	 * 
+	 * @author James Polanco
+	 * 
+	 */
+	public class SelectionObject extends Container implements ISelectable
+	{
+		private var __selected:Boolean = false;
+		
+		/**
+		 * Constructor 
+		 * 
+		 */
+		public function SelectionObject()
+		{
+		}
+
+		/**
+		 * The selected value is true for selected and false for deselected.
+		 *  
+		 * @param value
+		 * 
+		 */
+		public function set selected(value:Boolean):void
+		{
+			__selected = value;
+		}
+		
+		public function get selected():Boolean
+		{
+			return __selected;
+		}
+		
+	}
+}

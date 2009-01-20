@@ -33,9 +33,9 @@
 	<!-- CONNECTION CODE -->
 	<mx:Script>
 		<![CDATA[
-			import com.vivisectingmedia.localconnection.LCMessage;
-			import com.vivisectingmedia.framework.utils.events.LocalConnectionEvent;
-			import com.vivisectingmedia.framework.utils.LocalConnectionManager;
+			import com.developmentarc.localconnection.LCMessage;
+			import com.developmentarc.framework.utils.events.LocalConnectionEvent;
+			import com.developmentarc.framework.utils.LocalConnectionManager;
 			
 			public var conn:LocalConnectionManager;
 			public var localName:String;

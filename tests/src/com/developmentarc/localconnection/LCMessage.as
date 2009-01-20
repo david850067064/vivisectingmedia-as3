@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
 /* ***** BEGIN MIT LICENSE BLOCK *****
  * 
  * Copyright (c) 2009 DevelopmentArc LLC
+ * version 1.0
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +23,22 @@
  *
  *
  * ***** END MIT LICENSE BLOCK ***** */
--->
-<LibraryTestingApplication
-	xmlns="com.developmentarc.libtests.*"
-	xmlns:mx="http://www.adobe.com/2006/mxml"
-	xmlns:flexunit="flexunit.flexui.*" 
-	layout="absolute" >
+package com.developmentarc.localconnection
+{
+	/**
+	 * Test Class for passing data via the local connection manager.
+	 *  
+	 * @author James Polanco
+	 * 
+	 */
+	public class LCMessage
+	{
+		public var message:String;
+		public var connId:String;
+		
+		public function LCMessage()
+		{
+		}
 
-	<!-- TEST UI -->
-	<flexunit:TestRunnerBase id="test_runner" width="100%" height="100%" />
-</LibraryTestingApplication>
+	}
+}
