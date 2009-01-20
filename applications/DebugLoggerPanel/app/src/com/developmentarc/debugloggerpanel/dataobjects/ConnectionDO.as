@@ -1,6 +1,6 @@
-package com.vivisectingmedia.debugloggerpanel.dataobjects
+package com.developmentarc.debugloggerpanel.dataobjects
 {
-	import com.vivisectingmedia.framework.utils.LocalConnectionManager;
+	import com.developmentarc.framework.utils.LocalConnectionManager;
 	
 	import flash.events.EventDispatcher;
 

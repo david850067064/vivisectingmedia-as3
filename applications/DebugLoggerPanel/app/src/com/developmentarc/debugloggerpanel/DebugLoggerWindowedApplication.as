@@ -1,6 +1,6 @@
 /* ***** BEGIN MIT LICENSE BLOCK *****
  * 
- * Copyright (c) 2008 James Polanco
+ * Copyright (c) 2009 DevelopmentArc LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,15 +22,15 @@
  *
  *
  * ***** END MIT LICENSE BLOCK ***** */
-package com.vivisectingmedia.debugloggerpanel
+package com.developmentarc.debugloggerpanel
 {
-	import com.vivisectingmedia.debugloggerpanel.dataobjects.ConnectionDO;
-	import com.vivisectingmedia.debugloggerpanel.models.DataModel;
-	import com.vivisectingmedia.framework.datastructures.utils.HashTable;
-	import com.vivisectingmedia.framework.utils.LocalConnectionManager;
-	import com.vivisectingmedia.framework.utils.events.LocalConnectionEvent;
-	import com.vivisectingmedia.framework.utils.logging.DebugLogger;
-	import com.vivisectingmedia.framework.utils.logging.DebugMessage;
+	import com.developmentarc.debugloggerpanel.dataobjects.ConnectionDO;
+	import com.developmentarc.debugloggerpanel.models.DataModel;
+	import com.developmentarc.framework.datastructures.utils.HashTable;
+	import com.developmentarc.framework.utils.LocalConnectionManager;
+	import com.developmentarc.framework.utils.events.LocalConnectionEvent;
+	import com.developmentarc.framework.utils.logging.DebugLogger;
+	import com.developmentarc.framework.utils.logging.DebugMessage;
 	
 	import flash.desktop.InteractiveIcon;
 	import flash.display.Bitmap;

@@ -1,6 +1,6 @@
 /* ***** BEGIN MIT LICENSE BLOCK *****
  * 
- * Copyright (c) 2008 James Polanco
+ * Copyright (c) 2009 DevelopmentArc LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@
  *
  *
  * ***** END MIT LICENSE BLOCK ***** */
-package com.vivisectingmedia.debugloggerpanel.models
+package com.developmentarc.debugloggerpanel.models
 {
 	import flash.events.EventDispatcher;
 	
