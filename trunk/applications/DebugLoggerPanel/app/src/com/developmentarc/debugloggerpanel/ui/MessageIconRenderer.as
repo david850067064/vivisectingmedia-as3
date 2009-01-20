@@ -1,6 +1,6 @@
 /* ***** BEGIN MIT LICENSE BLOCK *****
  * 
- * Copyright (c) 2008 James Polanco
+ * Copyright (c) 2009 DevelopmentArc LLC
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,9 +22,9 @@
  *
  *
  * ***** END MIT LICENSE BLOCK ***** */
-package com.vivisectingmedia.debugloggerpanel.ui
+package com.developmentarc.debugloggerpanel.ui
 {
-	import com.vivisectingmedia.framework.utils.logging.DebugMessage;
+	import com.developmentarc.framework.utils.logging.DebugMessage;
 	
 	import mx.containers.Canvas;
 	import mx.controls.Image;
