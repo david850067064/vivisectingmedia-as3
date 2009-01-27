@@ -68,13 +68,28 @@ package com.developmentarc.framework.datastructures.tasks
 		
 		
 		/* PUBLIC PROPERTIES */
+		/**
+		 * The default phase value of a group when it is first constructed
+		 * but not added to the TaskController. 
+		 */
 		public static const GROUP_NOT_QUEUED:String = "GROUP_NOT_QUEUED";
 		
 		/* PROTECTED PROPERTEIS */
-		// Queue of tasks that are left to be executed
+		
+		/**
+		 * The current tasks that have been added to the Group but have not
+		 * been started() yet. 
+		 */
 		protected var taskQueue:PriorityQueue;
-		// Queue of all tasks that are either active, complete, canceled, or errored
+		
+		/**
+		 * The tasks that have been started, cancelled, ignored or errored out. 
+		 */		
 		protected var processedQueue:PriorityQueue;
+		
+		/**
+		 * The current phase of the group. 
+		 */
 		protected var currentPhase:String = GROUP_NOT_QUEUED;
 		
 		/* PRIVATE PROPERTIES */
@@ -358,6 +373,15 @@ package com.developmentarc.framework.datastructures.tasks
 			return true;
 		}
 		
+		/**
+		 * Defines whether the group is self-overriding or not. When a group
+		 * is self-overriding then when the group is added to the TaskController
+		 * the TaskController will determine if the group already exists in the queue
+		 * and if so then it will be removed from the queue.
+		 *  
+		 * @return True if self-overriding or false if not.
+		 *
+		 */
 		public function get selfOverride():Boolean {
 			return __selfOverride;
 		}

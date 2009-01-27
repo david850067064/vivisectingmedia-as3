@@ -26,20 +26,70 @@ package com.developmentarc.framework.controllers.interfaces
 {
 	import flash.events.IEventDispatcher;
 
+	/**
+	 * The ITaskGroup interface is used for collections that hold
+	 * tasks.  The default implementation using the ITaskGroup is
+	 * the TaskGroup Class.
+	 * 
+     * @see com.developmentarc.framework.datastructures.tasks.TaskGroup
+	 * 
+	 * @author Aaron Pedersen
+	 * 
+	 */
 	public interface ITaskGroup extends ITask
 	{
+		/**
+		 * Defines if the current group has any tasks in the queue.
+		 *  
+		 * @return True if tasks exist, false if not.
+		 * 
+		 */
 		function get hasTask():Boolean
 		
+		/**
+		 * Used to add a task to the task group implementation.
+		 *  
+		 * @param task The task to add to the group.
+		 * 
+		 */
 		function addTask(task:ITask):void
 		
+		/**
+		 * Used to add an array of tasks to the group.
+		 *  
+		 * @param value An array of ITask items.
+		 * 
+		 */
 		function set tasks(value:Array):void
 		
+		/**
+		 * Returns an Array of ITasks that are in the group.
+		 *  
+		 * @return Array of ITask items.
+		 * 
+		 */
 		function get tasks():Array
 		
+		/**
+		 * Removes the requested task from the group if the task exists. 
+		 * 
+		 * @param task The task to remove.
+		 * 
+		 */
 		function removeTask(task:ITask):void
 		
+		/**
+		 * Used to remove all the ITasks from the group. 
+		 * 
+		 */
 		function removeAllTasks():void
 		
+		/**
+		 * Looks up and returns the next ITask in the group.
+		 *  
+		 * @return The next ITask in the group.
+		 * 
+		 */
 		function next():ITask
 		
 	}

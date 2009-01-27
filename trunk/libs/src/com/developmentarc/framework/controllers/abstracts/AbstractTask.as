@@ -40,6 +40,9 @@ package com.developmentarc.framework.controllers.abstracts
 	 * Event.  Like an Event, the Task has a default type and priority that is
 	 * used by the TaskController and the TaskGroup to manage and organize the order
 	 * of the active tasks.</p>
+	 * 
+	 * @see com.developmentarc.framework.controllers.TaskController
+	 * @see com.developmentarc.framework.datastructures.tasks.TaskGroup
 	 */
 	[Event(name="taskReady",type="com.developmentarc.framework.controllers.events.TaskEvent")]
 	[Event(name="taskCompelte",type="com.developmentarc.framework.controllers.events.TaskEvent")] 
