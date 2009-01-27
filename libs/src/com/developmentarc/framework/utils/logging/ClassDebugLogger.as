@@ -24,9 +24,28 @@
  * ***** END MIT LICENSE BLOCK ***** */
 package com.developmentarc.framework.utils.logging
 {
+	/**
+	 * The Class Debug Logger is proxy object for the DebugLogger.  When using the DebugLogger
+	 * and you wish to pass in Class information, use the ClassDebugLogger in-place of referencing
+	 * the DebugLogger.  This enables you to define the class and method information to be passed
+	 * onto the DebugLogger.
+	 * 
+	 * <p>This information can be provided directly to the DebugLogger, but this Class provides 
+	 * convenience methods to make this easier to use.</p>
+	 * 
+	 * @author Aaron Pedersen
+	 * 
+	 */
 	public class ClassDebugLogger
 	{
 		private var _class:Class;
+		
+		/**
+		 * Constructor.
+		 *  
+		 * @param classReference The class that is calling the ClassDebugLogger.
+		 * 
+		 */
 		public function ClassDebugLogger(classReference:Class)
 		{
 			_class = classReference;
@@ -69,7 +88,7 @@ package com.developmentarc.framework.utils.logging
 		}
 		
 		/**
-		 * @see DebugLogger.debug
+		 * @see DebugLogger.error
 		 *  
 		 * @param message Text message to be dispatched and displayed.
 		 * @param method The method in which the message was generated. Optional

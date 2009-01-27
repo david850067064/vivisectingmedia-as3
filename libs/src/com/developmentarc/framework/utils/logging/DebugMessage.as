@@ -24,29 +24,93 @@
  * ***** END MIT LICENSE BLOCK ***** */
 package com.developmentarc.framework.utils.logging
 {
+	/**
+	 * The DebugMessage is used for the CachedLogging System to pass messages
+	 * from the Debug application to the Debug Log panel AIR application.  This
+	 * message contains important information about the broadcasted message used for
+	 * display and tracking purposes in the Debug Logger panel.
+	 * 
+	 * @author James Polanco
+	 * 
+	 */
 	public class DebugMessage
 	{
 		// CONSTANT TYPES
+		/**
+		 * Defines the Message as Informational, which is the lowest priority of the message types. 
+		 */
 		static public const INFO:int = 0;
+		
+		/**
+		 * Defines the Message as Debugging, which is the 2nd lowest priority of the message types.  
+		 */		
 		static public const DEBUG:int = 1;
+		
+		/**
+		 * Defines the Message as Warning, which is the 3rd highest priority of the message types.  
+		 */
 		static public const WARN:int = 2;
+		
+		/**
+		 * Defines the Message as an Error, which is the 2nd highest priority of the message types.  
+		 */
 		static public const ERROR:int = 3;
+		
+		/**
+		 * Defines the Message as Fatal, which is the highest priority of the message types.  
+		 */
 		static public const FATAL:int = 4;
 		
 		// SPECIAL MESSAGE TYPES
+		/**
+		 * Used to define the initial handshake message used by the DebugLogger. 
+		 */
 		static public const HANDSHAKE:int = 200;
+		
+		/**
+		 * Used to define an internal system message for the DebugLogger. 
+		 */
 		static public const SYSTEM_MESSAGE:int = 201;
 		
 		// SOURCE TYPES
+		/**
+		 * Defines the source type of the message as ActionScript. 
+		 */
 		static public const SOURCE_ACTIONSCRIPT:String = "AS";
+		
+		/**
+		 * Defines the source type of the message as JavaScript. 
+		 */		
 		static public const SOURCE_JAVASCRIPT:String = "JS";
 		
+		/**
+		 * Store the time of the message creation. 
+		 */
 		public var time:Date;
+		/**
+		 * Stores the user message broadcasted by the Debug call. 
+		 */		
 		public var message:String;
+		/**
+		 * Stores the type of the message.  This value is one of the default
+		 * message constants defined above.
+		 */
 		public var type:int;
+		/**
+		 * Stores a unique id of the message. 
+		 */		
 		public var id:String;
+		/**
+		 * Stores the class name of the broadcasting Debug call. 
+		 */		
 		public var className:String;
+		/**
+		 * Stores the source type.  This is one of the source type constants. 
+		 */		
 		public var sourceType:String;
+		/**
+		 * Stores the name of the method that called the Debugger. 
+		 */		
 		public var methodName:String;
 		
 		/**
