@@ -26,18 +26,71 @@ package com.developmentarc.framework.controllers.events
 {
 	import flash.events.Event;
 
+	/**
+	 * The TaskEvent is dispatched by Tasks and TaskGroups as they are processed
+	 * by the TaskController and/or are changing state as they process their current
+	 * functionality or childeren tasks.
+	 * 
+	 * @see com.developmentarc.framework.controllers.TaskController
+	 * @see com.developmentarc.framework.datastructures.tasks.TaskGroup
+	 * 
+	 * @author James Polanco
+	 * 
+	 */
 	public class TaskEvent extends Event
 	{
+		/**
+		 * Defines when a Task is ready to be started. 
+		 */
 		static public const TASK_READY:String = "TASK_READY";
+		
+		/**
+		 * Defines when a task has been completed. 
+		 */		
 		static public const TASK_COMPLETE:String = "TASK_COMPLETE";
+		
+		/**
+		 * Defines when a task is waiting for its ready state to change to true. 
+		 */		
 		static public const TASK_WAITING_FOR_READY:String = "TASK_WAITING_FOR_READY";
+		
+		
+		/**
+		 * Defines when a task is in either in the TaskController Queue or a TaskGroup queue. 
+		 * @see com.developmentarc.framework.controllers.TaskController
+	     * @see com.developmentarc.framework.datastructures.tasks.TaskGroup
+		 */
 		static public const TASK_QUEUED:String = "TASK_QUEUED";
+		
+		/**
+		 * Defines when a task has been started.
+		 */		
 		static public const TASK_START:String = "TASK_START";
+		
+		/**
+		 * Defines when a task has been paused. 
+		 */		
 		static public const TASK_PAUSE:String = "TASK_PAUSE";
+		
+		/**
+		 * Defines when a task has been cancelled. 
+		 */		
 		static public const TASK_CANCEL:String = "TASK_CANCEL";
+		
+		/**
+		 * Defines when a task has entered an error state. 
+		 */		
 		static public const TASK_ERROR:String = "TASK_ERROR";
+		
+		/**
+		 * Defines when a task is set to ignore. 
+		 */		
 		static public const TASK_IGNORED:String = "TASK_IGNORED"
 		
+		/**
+		 * @copy flash.events.Event
+		 * 
+		 */
 		public function TaskEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
 		{
 			super(type, bubbles, cancelable);
