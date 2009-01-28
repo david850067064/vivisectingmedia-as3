@@ -27,6 +27,7 @@ package com.developmentarc.libtests
 {
 	import com.developmentarc.flexunit.TestUtils;
 	import com.developmentarc.libtests.tests.AdjustableDateTests;
+	import com.developmentarc.libtests.tests.BrowserLocationUtilTest;
 	import com.developmentarc.libtests.tests.EventBrokerTests;
 	import com.developmentarc.libtests.tests.HashTableTests;
 	import com.developmentarc.libtests.tests.InstanceFactoryTests;
@@ -52,6 +53,7 @@ package com.developmentarc.libtests
 		// CLASS LINKERS -- ENABLES EASE OF COMMENTING OUT/IN TESTS //
 		private var eventbroker:EventBrokerTests;
 		private var selectioncontroller:SelectionControllerTests;
+		private var selectionGroup:SelectionGroupTests
 		private var hashtable:HashTableTests;
 		private var queue:QueueTests;
 		private var instancefactory:InstanceFactoryTests;
@@ -60,6 +62,7 @@ package com.developmentarc.libtests
 		private var taskcontroller:TaskControllerTests;
 		private var priorityqueue:PriorityQueueTests;
 		private var taskgroup:TaskGroupTests;
+		private var browserLocationUtil:BrowserLocationUtilTest;
 		
 		public function LibraryTestingApplication()
 		{
@@ -94,6 +97,7 @@ package com.developmentarc.libtests
 			suite.addTest( TestUtils.generateFullSuite(TaskGroupTests) );
 			suite.addTest( TestUtils.generateFullSuite(PriorityQueueTests) );
 			suite.addTest( TestUtils.generateFullSuite(TaskControllerTests) );
+			suite.addTest( TestUtils.generateFullSuite(BrowserLocationUtilTest) );
 			//*/
 			
 			return suite;
