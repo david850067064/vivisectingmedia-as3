@@ -30,6 +30,15 @@ package com.developmentarc.framework.controllers
 	import flash.events.IEventDispatcher;
 	import flash.events.MouseEvent;
 	
+	/**
+	 * Class defines a group of seletable items allowing the items to work as one entity. Upon selection of one of the items, each otheritem in the group is deselected.  
+	 * The goal of SelectionGroup is to provide developers with an alternative to the low-level direct access to the SelectionController provides.  
+	 * One advantage to using SelectionGroup is the ability to define groups and items via MXML, which SelectionController can not do.  <br />
+	 * 
+	 * By default SelectionGroup will listent o MouseClick.CLICK events, but this an be overriden by defined a comma seperated list of event types.  
+	 * Because SelectionGroup requires listeners when items are added to the group, ISelectable items must extend an EventDispatcher class or implement the IEventDispatcher.  <br />
+	 * 
+	 */
 	public class SelectionGroup
 	{
 		
@@ -40,6 +49,7 @@ package com.developmentarc.framework.controllers
 		private var __groupId:int;
 		private var _eventString:String;
 		private var _events:Array;
+		
 		// PRIVATE GET/SET VARIABLES
 		
 		public function SelectionGroup()
@@ -68,9 +78,19 @@ package com.developmentarc.framework.controllers
 
 		// GET/SET METHODS
 
+		/**
+		 * Unique id of the group
+		 * 
+		 * @return int Unique group id
+		 */
 		public function get groupId():int {
 			return __groupId;
 		}
+		
+		/**
+		 * GroupId can not be set by an outside class
+		 * 
+		 */
 		public function set groupId(groupId:int):void {
 			throw Error("Read only property");
 		}
@@ -111,7 +131,7 @@ package com.developmentarc.framework.controllers
 		/**
 		 * Variable holds all items currently in the group
 		 * 
-		 * @returns Array All items in the group
+		 * @return Array All items in the group
 		 */
 		public function get items():Array {
 			return SelectionController.getAllItemsInGroup(this.__groupId);
@@ -144,7 +164,6 @@ package com.developmentarc.framework.controllers
 			SelectionController.removeAllItems(this.__groupId);
 
 			// Add all new targets
-			
 			var valueLen:uint = values.length;
 			// Loop through all items currently in the group
 			for(x = 0; x < valueLen;x++) {
@@ -158,7 +177,12 @@ package com.developmentarc.framework.controllers
 			}	
 		}
 		
-		public function handleSelection(event:Event):void {
+		/**
+		 * Handler method for each event the group is listening to to indicate selection.
+		 * 
+		 * @param event Event dispatched from ISelectableItem
+		 */
+		protected function handleSelection(event:Event):void {
 			SelectionController.selectItem(ISelectable(event.currentTarget));
 		}
 
